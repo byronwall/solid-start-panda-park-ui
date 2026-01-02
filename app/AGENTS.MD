@@ -25,6 +25,7 @@ This is a **SolidStart** app that uses:
 
 - **Park UI conventions** for the component layer (see `app/components.json`)
 - **Ark UI (Solid)** primitives (`@ark-ui/solid`)
+- **Lucide (Solid)** icons (`lucide-solid`)
 - **Panda CSS** for tokens/recipes + codegen into `app/styled-system/`
 
 UI wrappers live in: `app/src/components/ui/*`  
@@ -67,6 +68,7 @@ Path aliases (see `app/tsconfig.json`):
 Recommended imports:
 
 - UI wrappers: `~/components/ui/<component>`
+- Icons: `import { CheckIcon, XIcon } from "lucide-solid"`
 - Panda:
   - `import { css } from "styled-system/css"`
   - `import { VStack } from "styled-system/jsx"`
