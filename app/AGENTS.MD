@@ -1,44 +1,63 @@
-# Working in this repo
+# AGENTS.md — Working in this repo
+
+## Quick rules (read first)
+
+- **Generated output**
+
+  - `app/styled-system/` is **generated** by Panda — **do not edit by hand**.
+  - If styles/types look wrong, run `pnpm prepare` (or `pnpm dev`, which runs it first).
+
+- **Data loading (SolidStart)**
+
+  - **Reads**: `query()` + `createAsync()`
+  - **Writes**: server actions
+  - **Avoid**: `fetch()` in UI components for app data, and adding React Query/SWR/etc.
+
+- **UI + styling**
+  - Prefer `~/components/ui/*` (Park UI-style wrappers) over direct Ark UI usage in routes.
+  - Prefer Panda (`css`, `styled-system/jsx`, `recipes`) over ad-hoc CSS.
+
+---
 
 ## Repo overview
 
-This repo is a **SolidStart** app using:
+This is a **SolidStart** app that uses:
 
-- **Park UI** conventions for the component layer (see `app/components.json`)
-- **Ark UI (Solid)** primitives under the hood (`@ark-ui/solid`)
-- **Panda CSS** for styling + design tokens, generating `app/styled-system/`
+- **Park UI conventions** for the component layer (see `app/components.json`)
+- **Ark UI (Solid)** primitives (`@ark-ui/solid`)
+- **Panda CSS** for tokens/recipes + codegen into `app/styled-system/`
 
-The prebuilt component library lives in `app/src/components/ui/*`.
+UI wrappers live in: `app/src/components/ui/*`  
+Theme/tokens live in: `app/src/theme/*`
 
 ---
 
 ## Getting started
 
+Prereqs:
+
 - **Node**: `>= 22` (see `app/package.json`)
 - **Package manager**: `pnpm`
 
-Common commands (run from `app/`):
+Run commands **from `app/`** (or use `pnpm -C app <cmd>`):
 
-- **Install**: `pnpm install`
-- **Generate Panda artifacts**: `pnpm prepare` (runs `panda codegen`)
-- **Dev server**: `pnpm dev` (runs `pnpm prepare && vinxi dev`)
-- **Build**: `pnpm build`
-- **Start**: `pnpm start`
-
-Notes:
-
-- `pnpm dev` always runs Panda codegen first, so UI/theme changes stay in sync.
-- `app/styled-system/` is generated output—**do not edit by hand**.
+- Install: `pnpm install`
+- Generate Panda artifacts: `pnpm prepare`
+- Dev server: `pnpm dev` _(runs `pnpm prepare` first)_
+- Build: `pnpm build`
+- Start: `pnpm start`
 
 ---
 
 ## Key paths & conventions
 
-- **App entry**: `app/src/app.tsx`
-- **UI components (Park UI-style wrappers)**: `app/src/components/ui/`
-- **Theme (tokens/recipes/global css)**: `app/src/theme/`
-- **Panda config**: `app/panda.config.ts` (outputs to `app/styled-system/`)
-- **Global CSS layers**: `app/src/index.css` (declares Panda layers)
+Core paths:
+
+- App entry: `app/src/app.tsx`
+- UI components: `app/src/components/ui/`
+- Theme (tokens/recipes/global css): `app/src/theme/`
+- Panda config: `app/panda.config.ts` → outputs `app/styled-system/`
+- Global CSS layers: `app/src/index.css`
 
 Path aliases (see `app/tsconfig.json`):
 
@@ -47,8 +66,8 @@ Path aliases (see `app/tsconfig.json`):
 
 Recommended imports:
 
-- **UI components**: `~/components/ui/<component>`
-- **Panda helpers**:
+- UI wrappers: `~/components/ui/<component>`
+- Panda:
   - `import { css } from "styled-system/css"`
   - `import { VStack } from "styled-system/jsx"`
   - `import { button } from "styled-system/recipes"`
@@ -57,35 +76,46 @@ Recommended imports:
 
 ## Working on UI
 
-- **Component approach**: `app/src/components/ui/*` are reusable building blocks built on Ark UI primitives (`ark.*`, contexts, etc.) and styled via Panda (`styled-system/*`).
-- **Styling approach**:
-  - Prefer Panda `css()` / `styled-system/jsx` primitives over ad-hoc CSS.
-  - Prefer recipes (`styled-system/recipes`) for variants/sizes and consistent styling.
-- **When changing theme/tokens/recipes**:
-  - Edit `app/src/theme/*` and/or `app/panda.config.ts`
-  - Run `pnpm prepare` (or just `pnpm dev`, which does it for you)
+Preferred approach:
+
+- Use existing wrappers in `~/components/ui/*`.
+- If you need a new primitive:
+  - Build it as a wrapper in `app/src/components/ui/<name>/`
+  - Base it on Ark UI primitives/contexts
+  - Style via Panda (`css`/`jsx`) and add/extend recipes when variants matter
+
+Styling rules of thumb:
+
+- Prefer recipes for variants/sizes and consistent tokens.
+- Prefer `styled-system/jsx` layout primitives for structure.
+- Avoid one-off CSS unless it’s truly global (then put it in the theme/global layers).
+
+Discover what UI wrappers exist:
+
+- `ls app/src/components/ui`
+- Grep for usage patterns:
+  - `rg "from \"~\/components\/ui" app/src`
 
 ---
 
 ## Client ↔ server communication (SolidStart)
 
-Use **SolidStart server actions** for writes/mutations and **Solid Router queries** for reads. This gives you SSR-friendly data loading, deduplication, and avoids ad-hoc networking.
+Use SolidStart’s SSR-friendly data APIs.
 
 - **Do**
-  - Use **server actions** for mutations (create/update/delete).
-  - Use **`query()`** for reads, typically consumed via `createAsync()` in components/routes.
-  - Keep networking and server-only logic on the server side; keep components mostly declarative.
+
+  - Reads: `query()` (server) + `createAsync()` (client)
+  - Writes: server actions
+  - Keep server-only logic on the server; keep components mostly declarative
+
 - **Avoid**
-  - Raw `fetch(...)` calls inside UI components for app data.
-  - Adding other client data frameworks (React Query, SWR, etc.).
+  - Raw `fetch(...)` inside UI components for app data
+  - Introducing other client data frameworks (React Query, SWR, etc.)
 
-Reference: Solid Router `query` docs: `https://docs.solidjs.com/solid-router/reference/data-apis/query#query`.
-
-Example shape (read via query):
+Example (read via query):
 
 ```ts
-import { query } from "@solidjs/router";
-import { createAsync } from "@solidjs/router";
+import { query, createAsync } from "@solidjs/router";
 
 // server-side fetcher; args must be JSON-serializable
 export const getThing = query(async (id: string) => {
@@ -96,87 +126,3 @@ export const getThing = query(async (id: string) => {
 // client usage (route/component)
 const thing = createAsync(() => getThing("123"));
 ```
-
----
-
-## Agent tooling: Ark UI MCP server
-
-Agents working in this repo can use the **Ark UI MCP server** for quick, authoritative UI reference:
-
-- **List components** available in Ark UI for a framework (use `solid` here)
-- **Inspect props** for a given Ark UI component
-- **Pull examples** and **styling/data-attribute guides** to implement features consistently
-
-Prefer this over guessing component APIs when wiring new UI.
-
-## Available UI components (inventory)
-
-All of these exist today under `app/src/components/ui/`. Import them via:
-
-```ts
-import { Button } from "~/components/ui/button";
-```
-
-Component modules:
-
-- `~/components/ui/absolute-center`
-- `~/components/ui/accordion`
-- `~/components/ui/alert`
-- `~/components/ui/avatar`
-- `~/components/ui/badge`
-- `~/components/ui/breadcrumb`
-- `~/components/ui/button`
-- `~/components/ui/card`
-- `~/components/ui/carousel`
-- `~/components/ui/checkbox`
-- `~/components/ui/clipboard`
-- `~/components/ui/close-button`
-- `~/components/ui/code`
-- `~/components/ui/collapsible`
-- `~/components/ui/color-picker`
-- `~/components/ui/combobox`
-- `~/components/ui/date-picker`
-- `~/components/ui/dialog`
-- `~/components/ui/drawer`
-- `~/components/ui/editable`
-- `~/components/ui/field`
-- `~/components/ui/fieldset`
-- `~/components/ui/file-upload`
-- `~/components/ui/group`
-- `~/components/ui/heading`
-- `~/components/ui/hover-card`
-- `~/components/ui/icon`
-- `~/components/ui/icon-button`
-- `~/components/ui/image`
-- `~/components/ui/input`
-- `~/components/ui/input-addon`
-- `~/components/ui/input-group`
-- `~/components/ui/kbd`
-- `~/components/ui/link`
-- `~/components/ui/loader`
-- `~/components/ui/menu`
-- `~/components/ui/number-input`
-- `~/components/ui/pagination`
-- `~/components/ui/pin-input`
-- `~/components/ui/popover`
-- `~/components/ui/progress`
-- `~/components/ui/radio-card-group`
-- `~/components/ui/radio-group`
-- `~/components/ui/rating-group`
-- `~/components/ui/scroll-area`
-- `~/components/ui/segment-group`
-- `~/components/ui/select`
-- `~/components/ui/skeleton`
-- `~/components/ui/slider`
-- `~/components/ui/span`
-- `~/components/ui/spinner`
-- `~/components/ui/splitter`
-- `~/components/ui/switch`
-- `~/components/ui/table`
-- `~/components/ui/tabs`
-- `~/components/ui/tags-input`
-- `~/components/ui/text`
-- `~/components/ui/textarea`
-- `~/components/ui/toast`
-- `~/components/ui/toggle-group`
-- `~/components/ui/tooltip`
