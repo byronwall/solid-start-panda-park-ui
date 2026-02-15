@@ -1,8 +1,12 @@
-import type { Assign, CollectionItem, SelectRootProps } from '@ark-ui/solid'
 import { ark } from '@ark-ui/solid/factory'
-import { Select, useSelectItemContext } from '@ark-ui/solid/select'
+import {
+  Select,
+  useSelectItemContext,
+  type SelectRootProps,
+  type SelectRootProviderProps,
+} from '@ark-ui/solid/select'
 import { CheckIcon, ChevronsUpDownIcon } from 'lucide-solid'
-import { Show } from 'solid-js'
+import { Show, type JSX } from 'solid-js'
 import { createStyleContext } from 'styled-system/jsx'
 import { type SelectVariantProps, select } from 'styled-system/recipes'
 import type { HTMLStyledProps } from 'styled-system/types'
@@ -11,9 +15,15 @@ const { withProvider, withContext } = createStyleContext(select)
 
 type StyleProps = SelectVariantProps & HTMLStyledProps<'div'>
 
-export type RootProps<T extends CollectionItem> = Assign<SelectRootProps<T>, StyleProps>
+type RootProps<T> = SelectRootProps<T> & StyleProps
+type RootProviderProps<T> = SelectRootProviderProps<T> & StyleProps
 
-export const Root = withProvider(Select.Root, 'root') as Select.RootComponent<StyleProps>
+export const Root = withProvider(Select.Root, 'root') as unknown as <T>(
+  props: RootProps<T>,
+) => JSX.Element
+export const RootProvider = withProvider(Select.RootProvider, 'root') as unknown as <T>(
+  props: RootProviderProps<T>,
+) => JSX.Element
 
 export const ClearTrigger = withContext(Select.ClearTrigger, 'clearTrigger')
 export const Content = withContext(Select.Content, 'content')
@@ -36,6 +46,8 @@ export const HiddenSelect = Select.HiddenSelect
 export {
   SelectContext as Context,
   SelectItemContext as ItemContext,
+  createListCollection,
+  type ListCollection,
   type SelectValueChangeDetails as ValueChangeDetails,
 } from '@ark-ui/solid/select'
 

@@ -1,49 +1,45 @@
 # SolidStart + Park UI (Panda CSS) Starter
 
-This repo is a **starter project** that contains a **SolidStart** app inside the `app/` directory, with **Park UI conventions** and **Panda CSS** already configured and ready to use.
+Starter repository for SolidStart with Park UI wrappers, Panda theming, and a curated set of developer-focused assets reconciled from `visual-notes`.
 
-## What’s inside
+## Layout
 
-- **SolidStart app**: `app/`
-- **Park UI-style component wrappers**: `app/src/components/ui/*`
-- **Ark UI (Solid) primitives**: via `@ark-ui/solid`
-- **Panda CSS** tokens/recipes + codegen output: `app/src/theme/*` → `app/styled-system/` (generated)
-- **Icons**: `lucide-solid`
+- `/app` - SolidStart application
+- `/AGENTS.md` - repo-level contributor + agent guidance
+- `/.agents/skills` - local reusable skills/playbooks
+- `/.mcp.json` - Ark UI MCP server wiring
+- `/docs` - migration/reconciliation documentation
 
-## Getting started
-
-Prereqs:
-
-- **Node**: `>= 22`
-- **Package manager**: `pnpm`
-
-Run everything from `app/` (or use `pnpm -C app <cmd>` from the repo root):
+## Quick Start
 
 ```bash
 pnpm -C app install
 pnpm -C app dev
 ```
 
-Other useful commands:
+## Useful Commands
 
 ```bash
-pnpm -C app prepare   # panda codegen
+pnpm -C app prepare
+pnpm -C app type-check
+pnpm -C app test
 pnpm -C app build
 pnpm -C app start
 ```
 
-## Data loading & mutations (recommended approach)
+## UI Surface
 
-This starter is meant to lean on **Solid Router / SolidStart** for app data:
+Base Park-style wrappers are in `app/src/components/ui/*`, including reconciled utility wrappers:
 
-- **Reads**: `query()` + `createAsync()`
-- **Writes**: server actions
-- **Avoid**: calling `fetch()` in UI components for app data, or adding React Query / SWR / etc.
+- `SimpleDialog`
+- `SimplePopover`
+- `SimpleSelect`
+- `PanelPopover`
+- `ConfirmDialog`
+- `ClearButton`
+- `WrapWhen`
 
-See `app/AGENTS.MD` for the repo’s working rules and examples.
+## Reconciliation Notes
 
-## UI & styling conventions
+See `/docs/visual-notes-reconciliation-2026-02-15.md` for the full import list and rationale.
 
-- Prefer importing UI from `~/components/ui/*` (Park UI-style wrappers) rather than using Ark UI primitives directly inside routes.
-- Prefer Panda (`styled-system/css`, `styled-system/jsx`, `styled-system/recipes`) over ad-hoc CSS.
-- Don’t edit `app/styled-system/` by hand (it’s generated).

@@ -45,7 +45,11 @@ export const Button = (props: ButtonProps) => {
   ])
 
   return (
-    <BaseButton type="button" {...rest} disabled={local.loading || rest.disabled}>
+    <BaseButton
+      {...rest}
+      type={rest.type ?? 'button'}
+      disabled={local.loading || rest.disabled}
+    >
       <Show when={local.loading} fallback={local.children}>
         <Loader
           spinner={local.spinner}
