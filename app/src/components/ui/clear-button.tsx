@@ -1,6 +1,7 @@
 import { CircleXIcon } from "lucide-solid";
 import { splitProps } from "solid-js";
 import { IconButton, type IconButtonProps } from "./icon-button";
+import { Tooltip } from "./tooltip";
 
 export type ClearButtonProps = IconButtonProps & {
   label?: string;
@@ -11,15 +12,16 @@ export const ClearButton = (props: ClearButtonProps) => {
   const label = () => local.label ?? "Clear";
 
   return (
-    <IconButton
-      size="xs"
-      variant="plain"
-      aria-label={label()}
-      title={label()}
-      type="button"
-      {...rest}
-    >
-      {local.children ?? <CircleXIcon />}
-    </IconButton>
+    <Tooltip content={label()} disabled={rest.disabled}>
+      <IconButton
+        size="xs"
+        variant="plain"
+        aria-label={label()}
+        type="button"
+        {...rest}
+      >
+        {local.children ?? <CircleXIcon />}
+      </IconButton>
+    </Tooltip>
   );
 };

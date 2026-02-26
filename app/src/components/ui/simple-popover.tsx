@@ -4,7 +4,15 @@ import { WrapWhen } from "./WrapWhen";
 import * as Popover from "./popover";
 import { PopoverRootProps } from "@ark-ui/solid";
 
-type Placement = "bottom-start" | "bottom-end" | "top-start" | "top-end";
+type Placement =
+  | "bottom-start"
+  | "bottom-end"
+  | "top-start"
+  | "top-end"
+  | "right-start"
+  | "right-end"
+  | "left-start"
+  | "left-end";
 
 type PopoverProps = {
   open: boolean;
@@ -53,7 +61,9 @@ export const SimplePopover = (props: PopoverProps) => {
       }}
       positioning={positioning()}
     >
-      <Popover.Anchor>{local.anchor}</Popover.Anchor>
+      <Popover.Anchor style={{ display: "inline-flex", width: "fit-content" }}>
+        {local.anchor}
+      </Popover.Anchor>
       <WrapWhen when={portalled()} component={Portal}>
         <Popover.Positioner>
           <Popover.Content class={local.class} style={local.style}>

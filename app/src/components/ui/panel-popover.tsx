@@ -39,7 +39,9 @@ export const PanelPopover = (props: PanelPopoverProps) => {
       }}
       positioning={positioning()}
     >
-      <Popover.Anchor>{props.anchor}</Popover.Anchor>
+      <Popover.Anchor style={{ display: "inline-flex", width: "fit-content" }}>
+        {props.anchor}
+      </Popover.Anchor>
       <WrapWhen when={portalled()} component={Portal}>
         <Popover.Positioner>
           <Popover.Content style={{ width: props.width ?? "24rem" }}>
@@ -55,4 +57,3 @@ export const PanelPopover = (props: PanelPopoverProps) => {
     </Popover.Root>
   );
 };
-

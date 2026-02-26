@@ -1,6 +1,7 @@
 import { Accessor, For, Show, createMemo, type ComponentProps } from "solid-js";
 import type { SelectRootProps } from "@ark-ui/solid/select";
 import { Portal } from "solid-js/web";
+import { css } from "styled-system/css";
 import { HStack } from "styled-system/jsx";
 import * as Select from "~/components/ui/select";
 import { WrapWhen } from "./WrapWhen";
@@ -36,8 +37,8 @@ export function SimpleSelect(props: SimpleSelectProps) {
     SelectRootProps<SimpleSelectItem>["positioning"]
   > = () => {
     if (props.positioning) return props.positioning;
-    if (props.sameWidth) return { sameWidth: true };
-    return { placement: "bottom-start" };
+    if (props.sameWidth === false) return { placement: "bottom-start" };
+    return { placement: "bottom-start", sameWidth: true };
   };
 
   const inlineLabel = () =>
@@ -55,7 +56,7 @@ export function SimpleSelect(props: SimpleSelectProps) {
   return (
     <Select.Root
       collection={collection()}
-      value={[props.value ?? ""]}
+      value={props.value ? [props.value] : []}
       onValueChange={(details) => props.onChange(details.value[0] || "")}
       size={props.size}
       positioning={positioning()}
@@ -82,7 +83,7 @@ export function SimpleSelect(props: SimpleSelectProps) {
       </Show>
       <WrapWhen when={props.skipPortal !== true} component={Portal}>
         <Select.Positioner>
-          <Select.Content>
+          <Select.Content class={contentClass}>
             <Select.List>
               <For each={collection().items}>
                 {(item) => (
@@ -100,3 +101,7 @@ export function SimpleSelect(props: SimpleSelectProps) {
     </Select.Root>
   );
 }
+
+const contentClass = css({
+  maxH: "72",
+});
