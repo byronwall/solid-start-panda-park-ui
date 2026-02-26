@@ -1,7 +1,7 @@
 import { Show, type JSX } from "solid-js";
 import { Portal } from "solid-js/web";
 import { css } from "styled-system/css";
-import * as Dialog from "~/components/ui/dialog";
+import * as Dialog from "./dialog";
 import { WrapWhen } from "./WrapWhen";
 import { CloseButton } from "./close-button";
 

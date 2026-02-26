@@ -1,9 +1,10 @@
-import { Accessor, For, Show, createMemo, type ComponentProps } from "solid-js";
+import type { Accessor} from "solid-js";
+import { For, Show, createMemo, type ComponentProps } from "solid-js";
 import type { SelectRootProps } from "@ark-ui/solid/select";
 import { Portal } from "solid-js/web";
 import { css } from "styled-system/css";
 import { HStack } from "styled-system/jsx";
-import * as Select from "~/components/ui/select";
+import * as Select from "./select";
 import { WrapWhen } from "./WrapWhen";
 
 export type SimpleSelectItem = {

@@ -1,4 +1,5 @@
-import { JSX, Show, createEffect, onCleanup } from "solid-js";
+import type { JSX} from "solid-js";
+import { Show, createEffect, onCleanup } from "solid-js";
 import { Portal } from "solid-js/web";
 import { Box } from "styled-system/jsx";
 

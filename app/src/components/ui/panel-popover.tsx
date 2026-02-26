@@ -1,6 +1,6 @@
-import { Accessor, JSX } from "solid-js";
+import type { Accessor, JSX } from "solid-js";
 import { Portal } from "solid-js/web";
-import { PopoverRootProps } from "@ark-ui/solid";
+import type { PopoverRootProps } from "@ark-ui/solid";
 import { WrapWhen } from "./WrapWhen";
 import * as Popover from "./popover";
 

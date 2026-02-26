@@ -1,7 +1,7 @@
 import { type JSX } from "solid-js";
 import { HStack, VStack } from "styled-system/jsx";
-import { SimpleDialog } from "~/components/ui/simple-dialog";
-import { Button } from "~/components/ui/button";
+import { SimpleDialog } from "./simple-dialog";
+import { Button } from "./button";
 
 type ConfirmDialogProps = {
   open: boolean;

@@ -1,4 +1,5 @@
-import { type JSX, Component, children, Show } from "solid-js";
+import type { Component} from "solid-js";
+import { type JSX, children, Show } from "solid-js";
 import { Dynamic } from "solid-js/web";
 
 export function WrapWhen(props: {
