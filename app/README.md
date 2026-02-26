@@ -36,3 +36,12 @@ This starter now includes additional reusable wrappers and dev scaffolding sourc
 
 For complete migration details and rationale, see `../docs/visual-notes-reconciliation-2026-02-15.md`.
 
+## Markdown Renderer Module
+
+Reusable markdown rendering (GFM, syntax-highlighted code blocks, mermaid rendering) is available at:
+
+- `src/components/markdown-renderer/`
+
+Usage guide:
+
+- `../docs/markdown-renderer-usage.md`

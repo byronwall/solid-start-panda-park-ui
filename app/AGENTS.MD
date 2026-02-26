@@ -48,6 +48,10 @@ Run inside `app/`:
   - Main entry: `ConsoleLogCapturePanel.tsx`
   - In-module store: `consoleLogCapture.store.ts`
   - Keep related UI/state/utils in this single module folder.
+- Markdown rendering stack is available at `app/src/components/markdown-renderer/`.
+  - Main entry: `MarkdownRenderer.tsx`
+  - Shared exports: `index.ts`
+  - Keep markdown rendering, highlighting, and mermaid helpers co-located in this module folder.
 
 ## Data + SSR Safety
 
