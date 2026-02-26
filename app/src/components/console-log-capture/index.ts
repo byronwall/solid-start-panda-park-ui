@@ -1,4 +1,5 @@
 export { ConsoleLogCapturePanel } from "./ConsoleLogCapturePanel";
+export { ConsoleLogCaptureProvider } from "./ConsoleLogCaptureProvider";
 export {
   clearConsoleLogEntries,
   consoleLogCaptureEnabled,
