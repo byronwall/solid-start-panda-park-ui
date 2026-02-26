@@ -13,6 +13,8 @@ SolidStart app with Park UI wrappers and Panda CSS.
 pnpm install
 pnpm prepare
 pnpm dev
+pnpm lint
+pnpm lint:fix
 pnpm type-check
 pnpm test
 pnpm build

@@ -18,6 +18,8 @@ Run inside `app/`:
 - `pnpm install`
 - `pnpm prepare`
 - `pnpm dev`
+- `pnpm lint`
+- `pnpm lint:fix`
 - `pnpm type-check`
 - `pnpm test`
 - `pnpm build`

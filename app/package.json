@@ -4,6 +4,8 @@
   "scripts": {
     "prepare": "panda codegen",
     "dev": "pnpm prepare && vinxi dev",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "test": "vitest run",
     "type-check": "tsc --noEmit",
     "build": "vinxi build",
@@ -25,8 +27,15 @@
     "node": ">=22"
   },
   "devDependencies": {
+    "@dword-design/eslint-plugin-import-alias": "^5.1.1",
+    "@typescript-eslint/eslint-plugin": "^7.6.0",
+    "@typescript-eslint/parser": "^7.6.0",
     "@pandacss/dev": "^1.7.2",
     "@types/node": "^20.11.26",
+    "eslint": "^9.13.0",
+    "eslint-import-resolver-typescript": "^3.6.1",
+    "eslint-plugin-import": "^2.28.1",
+    "eslint-plugin-solid": "^0.14.3",
     "typescript": "^5.6.2",
     "vite": "^6.2.2",
     "vitest": "^2.1.4",
