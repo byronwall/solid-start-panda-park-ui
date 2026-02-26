@@ -1,4 +1,4 @@
-import { createSignal } from "solid-js";
+import { createSignal, untrack } from "solid-js";
 
 export type ConsoleCaptureLevel =
   | "log"
@@ -201,7 +201,7 @@ const createPatchedConsoleMethod = (
   original: (...args: any[]) => void,
 ) => {
   return (...args: unknown[]) => {
-    pushEntry(level, args);
+    untrack(() => pushEntry(level, args));
     original(...args);
   };
 };

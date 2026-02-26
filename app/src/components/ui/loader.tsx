@@ -1,4 +1,4 @@
-import { type JSX, splitProps } from 'solid-js'
+import { Match, type JSX, splitProps, Switch } from 'solid-js'
 import { type HTMLStyledProps, styled } from 'styled-system/jsx'
 import { AbsoluteCenter } from './absolute-center'
 import { Spinner } from './spinner'
@@ -42,32 +42,24 @@ export const Loader = (props: LoaderProps) => {
   const spinnerPlacement = () => local.spinnerPlacement ?? 'start'
   const visible = () => local.visible ?? true
 
-  if (!visible()) return local.children
-
-  if (local.text) {
-    return (
-      <Span display="contents" {...rest}>
-        {spinnerPlacement() === 'start' && spinner()}
-        {local.text}
-        {spinnerPlacement() === 'end' && spinner()}
-      </Span>
-    )
-  }
-
-  if (local.spinner !== undefined) {
-    return (
-      <Span display="contents" {...rest}>
-        <AbsoluteCenter display="inline-flex">{spinner()}</AbsoluteCenter>
-        <Span visibility="hidden" display="contents">
-          {local.children}
-        </Span>
-      </Span>
-    )
-  }
-
   return (
-    <Span display="contents" {...rest}>
-      {local.children}
-    </Span>
+    <Switch fallback={<Span display="contents" {...rest}>{local.children}</Span>}>
+      <Match when={!visible()}>{local.children}</Match>
+      <Match when={local.text}>
+        <Span display="contents" {...rest}>
+          {spinnerPlacement() === 'start' && spinner()}
+          {local.text}
+          {spinnerPlacement() === 'end' && spinner()}
+        </Span>
+      </Match>
+      <Match when={local.spinner !== undefined}>
+        <Span display="contents" {...rest}>
+          <AbsoluteCenter display="inline-flex">{spinner()}</AbsoluteCenter>
+          <Span visibility="hidden" display="contents">
+            {local.children}
+          </Span>
+        </Span>
+      </Match>
+    </Switch>
   )
 }

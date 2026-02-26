@@ -24,10 +24,10 @@ type MarkdownMermaidDialogProps = {
   onReset: () => void;
   onZoomIn: () => void;
   onViewportRef: (element: HTMLDivElement) => void;
-  onWheel: JSX.EventHandlerUnion<HTMLDivElement, WheelEvent>;
-  onPointerDown: JSX.EventHandlerUnion<HTMLDivElement, PointerEvent>;
-  onPointerMove: JSX.EventHandlerUnion<HTMLDivElement, PointerEvent>;
-  onPointerUp: JSX.EventHandlerUnion<HTMLDivElement, PointerEvent>;
+  onWheel: JSX.EventHandler<HTMLDivElement, WheelEvent>;
+  onPointerDown: JSX.EventHandler<HTMLDivElement, PointerEvent>;
+  onPointerMove: JSX.EventHandler<HTMLDivElement, PointerEvent>;
+  onPointerUp: JSX.EventHandler<HTMLDivElement, PointerEvent>;
 };
 
 export function MarkdownMermaidDialog(props: MarkdownMermaidDialogProps) {
@@ -82,11 +82,11 @@ export function MarkdownMermaidDialog(props: MarkdownMermaidDialogProps) {
               ref={local.onViewportRef}
               class={markdownStyles.mermaidDialogViewport}
               style={{ cursor: local.cursor }}
-              onWheel={local.onWheel}
-              onPointerDown={local.onPointerDown}
-              onPointerMove={local.onPointerMove}
-              onPointerUp={local.onPointerUp}
-              onPointerCancel={local.onPointerUp}
+              onWheel={(event) => local.onWheel(event)}
+              onPointerDown={(event) => local.onPointerDown(event)}
+              onPointerMove={(event) => local.onPointerMove(event)}
+              onPointerUp={(event) => local.onPointerUp(event)}
+              onPointerCancel={(event) => local.onPointerUp(event)}
             >
               <Show when={local.svg}>
                 {(svg) => (

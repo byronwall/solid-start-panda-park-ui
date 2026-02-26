@@ -1,4 +1,4 @@
-import { children, splitProps, type JSX } from "solid-js";
+import { children, createMemo, Show, splitProps, type JSX } from "solid-js";
 import { normalizeCodeText, parseLanguage } from "./markdown-utils";
 import { isBlockCode } from "./markdown-code-utils";
 import { HighlightedLineNumberedCode } from "./highlighted-line-numbered-code";
@@ -20,26 +20,26 @@ export function MarkdownCode(codeProps: MarkdownCodeProps) {
     "inline",
   ]);
   const resolvedChildren = children(() => local.children);
-  const codeText = () => normalizeCodeText(resolvedChildren(), local.node);
-
-  const languageClass = () => local.class ?? local.className;
-
-  if (!isBlockCode(languageClass(), local.inline)) {
-    return (
-      <code class={markdownStyles.inlineCode} {...rest}>
-        {codeText()}
-      </code>
-    );
-  }
-
-  const language = parseLanguage(languageClass());
+  const codeText = createMemo(() => normalizeCodeText(resolvedChildren(), local.node));
+  const languageClass = createMemo(() => local.class ?? local.className);
+  const isBlock = createMemo(() => isBlockCode(languageClass(), local.inline));
+  const language = createMemo(() => parseLanguage(languageClass()));
 
   return (
-    <HighlightedLineNumberedCode
-      {...rest}
-      language={language}
-      codeText={codeText()}
-      data-md-raw={codeText()}
-    />
+    <Show
+      when={isBlock()}
+      fallback={
+        <code class={markdownStyles.inlineCode} {...rest}>
+          {codeText()}
+        </code>
+      }
+    >
+      <HighlightedLineNumberedCode
+        {...rest}
+        language={language()}
+        codeText={codeText()}
+        data-md-raw={codeText()}
+      />
+    </Show>
   );
 }

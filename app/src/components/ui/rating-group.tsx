@@ -33,7 +33,8 @@ const cloneIcon = (icon: JSX.Element, type: string) => {
   if (!icon) return null
   const props = { [`data-${type}`]: '', 'aria-hidden': true, fill: 'currentColor' }
   if (typeof icon === 'object' && 'props' in icon) {
-    return { ...icon, props: mergeProps(icon.props || {}, props) }
+    const mergedIconProps = mergeProps(icon.props || {}, props)
+    return { ...icon, props: mergedIconProps }
   }
   return icon
 }

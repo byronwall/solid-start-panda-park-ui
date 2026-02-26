@@ -20,7 +20,7 @@ export function MarkdownMermaidActionTray(
         type="button"
         class={markdownStyles.copyButton}
         data-code-action="true"
-        onClick={local.onCopy}
+        onClick={() => local.onCopy()}
       >
         <Show when={local.isCopied} fallback={<CopyIcon size={14} />}>
           <CheckIcon size={14} />
@@ -33,7 +33,7 @@ export function MarkdownMermaidActionTray(
         data-code-action="true"
         aria-label="Download mermaid diagram"
         title="Download SVG"
-        onClick={local.onDownload}
+        onClick={() => local.onDownload()}
       >
         <DownloadIcon size={14} />
       </button>
@@ -43,7 +43,7 @@ export function MarkdownMermaidActionTray(
         data-code-action="true"
         aria-label="Open expanded mermaid diagram"
         title="Expand diagram"
-        onClick={local.onExpand}
+        onClick={() => local.onExpand()}
       >
         <ExpandIcon size={14} />
       </button>

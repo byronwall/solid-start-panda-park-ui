@@ -1,6 +1,6 @@
 import { ark } from '@ark-ui/solid/factory'
 import { createContext } from '@ark-ui/solid/utils'
-import { type ComponentProps, createMemo, type JSX, mergeProps, Show, splitProps } from 'solid-js'
+import { type ComponentProps, type JSX, mergeProps, Show, splitProps } from 'solid-js'
 import { styled } from 'styled-system/jsx'
 import { type ButtonVariantProps, button } from 'styled-system/recipes'
 import { Group, type GroupProps } from './group'
@@ -66,12 +66,10 @@ export const Button = (props: ButtonProps) => {
 export interface ButtonGroupProps extends GroupProps, ButtonVariantProps {}
 
 export const ButtonGroup = (props: ButtonGroupProps) => {
-  const splitProps = createMemo(() => button.splitVariantProps(props))
-  const variantProps = () => splitProps()[0]
-  const otherProps = () => splitProps()[1]
+  const [variantProps, otherProps] = button.splitVariantProps(props)
   return (
-    <ButtonPropsProvider value={variantProps()}>
-      <Group {...otherProps()} />
+    <ButtonPropsProvider value={variantProps}>
+      <Group {...otherProps} />
     </ButtonPropsProvider>
   )
 }

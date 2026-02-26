@@ -31,25 +31,26 @@ export interface MarksProps extends MarkerGroupProps {
 
 export const Marks = (props: MarksProps) => {
   const [local, rest] = splitProps(props, ['marks'])
-  if (!local.marks?.length) return null
 
   return (
-    <MarkerGroup {...rest}>
-      <For each={local.marks}>
-        {(mark) => {
-          const value = typeof mark === 'number' ? mark : mark.value
-          const label = typeof mark === 'number' ? undefined : mark.label
-          return (
-            <Marker value={value}>
-              <MarkerIndicator />
-              <Show when={label != null}>
-                <span>{label}</span>
-              </Show>
-            </Marker>
-          )
-        }}
-      </For>
-    </MarkerGroup>
+    <Show when={local.marks?.length}>
+      <MarkerGroup {...rest}>
+        <For each={local.marks}>
+          {(mark) => {
+            const value = typeof mark === 'number' ? mark : mark.value
+            const label = typeof mark === 'number' ? undefined : mark.label
+            return (
+              <Marker value={value}>
+                <MarkerIndicator />
+                <Show when={label != null}>
+                  <span>{label}</span>
+                </Show>
+              </Marker>
+            )
+          }}
+        </For>
+      </MarkerGroup>
+    </Show>
   )
 }
 

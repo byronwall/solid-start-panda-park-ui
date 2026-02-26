@@ -1,4 +1,4 @@
-import { createMemo, onCleanup } from "solid-js";
+import { createMemo, onCleanup, untrack } from "solid-js";
 import { createStore } from "solid-js/store";
 import type { JSX } from "solid-js";
 
@@ -88,12 +88,12 @@ export function useMermaidViewport() {
   const scheduleFitToViewport = () => {
     window.requestAnimationFrame(() => {
       window.requestAnimationFrame(() => {
-        fitToViewport();
+        untrack(() => fitToViewport());
       });
     });
     registerTimeout(
       window.setTimeout(() => {
-        fitToViewport();
+        untrack(() => fitToViewport());
       }, 64),
     );
   };
