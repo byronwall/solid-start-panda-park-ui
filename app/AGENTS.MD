@@ -42,6 +42,13 @@ Run inside `app/`:
 - Keep SSR + hydration output stable for overlay controls.
 - Use Panda tokens and recipes; avoid hard-coded spacing/colors unless a token is missing.
 
+## Available Feature Modules
+
+- Console log capture/viewer is available at `app/src/components/console-log-capture/`.
+  - Main entry: `ConsoleLogCapturePanel.tsx`
+  - In-module store: `consoleLogCapture.store.ts`
+  - Keep related UI/state/utils in this single module folder.
+
 ## Data + SSR Safety
 
 - Keep server-only logic on the server.
