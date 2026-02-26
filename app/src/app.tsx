@@ -1,6 +1,5 @@
 import type { Component } from "solid-js";
-import { css } from "../styled-system/css";
-import { VStack, Wrap } from "../styled-system/jsx";
+import { VStack } from "../styled-system/jsx";
 
 import "./index.css";
 import { Button } from "./components/ui/button";
