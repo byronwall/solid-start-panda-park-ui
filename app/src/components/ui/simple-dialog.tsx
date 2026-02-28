@@ -43,7 +43,7 @@ export function SimpleDialog(props: SimpleDialogProps) {
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
-      })
+      }),
     );
     if (props.contentClass) classes.push(props.contentClass);
     return classes.join(" ");

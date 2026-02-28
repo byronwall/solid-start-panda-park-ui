@@ -1,28 +1,15 @@
-import type { Component } from "solid-js";
-import { VStack } from "../styled-system/jsx";
-
-import "./index.css";
-import { Button } from "./components/ui/button";
-import { Send } from "lucide-solid";
-import { AbsoluteCenter } from "./components/ui/absolute-center";
+import { Suspense } from "solid-js";
+import { Router } from "@solidjs/router";
+import { FileRoutes } from "@solidjs/start/router";
 import { ConsoleLogCaptureProvider } from "./components/console-log-capture";
 
-const App: Component = () => {
+import "./index.css";
+
+export default function App() {
   return (
-    <>
-      <AbsoluteCenter axis="both">
-        <VStack gap="8">
-          <div>Hello 🐼!</div>
-
-          <Button variant="outline" size="sm">
-            <Send />
-            Click me
-          </Button>
-        </VStack>
-      </AbsoluteCenter>
+    <Router root={(props) => <Suspense>{props.children}</Suspense>}>
+      <FileRoutes />
       <ConsoleLogCaptureProvider />
-    </>
+    </Router>
   );
-};
-
-export default App;
+}

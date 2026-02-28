@@ -1,4 +1,4 @@
-import type { Accessor} from "solid-js";
+import type { Accessor } from "solid-js";
 import { For, Show, createMemo, type ComponentProps } from "solid-js";
 import type { SelectRootProps } from "@ark-ui/solid/select";
 import { Portal } from "solid-js/web";
@@ -31,7 +31,7 @@ type SimpleSelectProps = {
 
 export function SimpleSelect(props: SimpleSelectProps) {
   const collection = createMemo(() =>
-    Select.createListCollection<SimpleSelectItem>({ items: props.items })
+    Select.createListCollection<SimpleSelectItem>({ items: props.items }),
   );
 
   const positioning: Accessor<

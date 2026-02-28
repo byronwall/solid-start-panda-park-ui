@@ -39,6 +39,7 @@ export const drawer = defineSlotRecipe({
       flexDirection: 'column',
       position: 'relative',
       width: '100%',
+      maxW: 'var(--drawer-size)',
       outline: 0,
       zIndex: 'modal',
       maxH: '100dvh',
@@ -103,32 +104,38 @@ export const drawer = defineSlotRecipe({
     size: {
       xs: {
         content: {
-          maxW: 'xs',
+          '--drawer-size': 'sizes.xs',
+          '--drawer-block-size': '20dvh',
         },
       },
       sm: {
         content: {
-          maxW: 'sm',
+          '--drawer-size': 'sizes.sm',
+          '--drawer-block-size': '28dvh',
         },
       },
       md: {
         content: {
-          maxW: 'md',
+          '--drawer-size': 'sizes.md',
+          '--drawer-block-size': '36dvh',
         },
       },
       lg: {
         content: {
-          maxW: 'lg',
+          '--drawer-size': 'sizes.lg',
+          '--drawer-block-size': '48dvh',
         },
       },
       xl: {
         content: {
-          maxW: 'xl',
+          '--drawer-size': 'sizes.xl',
+          '--drawer-block-size': '64dvh',
         },
       },
       full: {
         content: {
-          maxW: '100vw',
+          '--drawer-size': '100vw',
+          '--drawer-block-size': '100dvh',
           h: '100dvh',
         },
       },
@@ -180,7 +187,9 @@ export const drawer = defineSlotRecipe({
           alignItems: 'flex-start',
         },
         content: {
-          maxW: '100%',
+          width: '100vw',
+          maxW: '100vw',
+          h: 'var(--drawer-block-size)',
           _open: { animationName: 'slide-from-top-full, fade-in' },
           _closed: { animationName: 'slide-to-top-full, fade-out' },
         },
@@ -192,7 +201,9 @@ export const drawer = defineSlotRecipe({
           alignItems: 'flex-end',
         },
         content: {
-          maxW: '100%',
+          width: '100vw',
+          maxW: '100vw',
+          h: 'var(--drawer-block-size)',
           _open: { animationName: 'slide-from-bottom-full, fade-in' },
           _closed: { animationName: 'slide-to-bottom-full, fade-out' },
         },

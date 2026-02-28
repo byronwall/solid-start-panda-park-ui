@@ -1,28 +1,28 @@
-import { Checkbox, useCheckboxContext } from '@ark-ui/solid/checkbox'
-import type { ComponentProps } from 'solid-js'
-import { createStyleContext, styled } from 'styled-system/jsx'
-import { checkbox } from 'styled-system/recipes'
-import type { HTMLStyledProps } from 'styled-system/types'
+import { Checkbox, useCheckboxContext } from "@ark-ui/solid/checkbox";
+import type { ComponentProps } from "solid-js";
+import { createStyleContext, styled } from "styled-system/jsx";
+import { checkbox } from "styled-system/recipes";
+import type { HTMLStyledProps } from "styled-system/types";
 
-const { withProvider, withContext } = createStyleContext(checkbox)
+const { withProvider, withContext } = createStyleContext(checkbox);
 
-export type RootProps = ComponentProps<typeof Root>
-export type HiddenInputProps = ComponentProps<typeof HiddenInput>
+export type RootProps = ComponentProps<typeof Root>;
+export type HiddenInputProps = ComponentProps<typeof HiddenInput>;
 
-export const Root = withProvider(Checkbox.Root, 'root')
-export const RootProvider = withProvider(Checkbox.RootProvider, 'root')
-export const Control = withContext(Checkbox.Control, 'control')
-export const Group = withProvider(Checkbox.Group, 'group')
-export const Label = withContext(Checkbox.Label, 'label')
-export const HiddenInput = Checkbox.HiddenInput
+export const Root = withProvider(Checkbox.Root, "root");
+export const RootProvider = withProvider(Checkbox.RootProvider, "root");
+export const Control = withContext(Checkbox.Control, "control");
+export const Group = withProvider(Checkbox.Group, "group");
+export const Label = withContext(Checkbox.Label, "label");
+export const HiddenInput = Checkbox.HiddenInput;
 
 export {
   type CheckboxCheckedState as CheckedState,
   CheckboxGroupProvider as GroupProvider,
-} from '@ark-ui/solid/checkbox'
+} from "@ark-ui/solid/checkbox";
 
-export const Indicator = (props: HTMLStyledProps<'svg'>) => {
-  const checkbox = useCheckboxContext()
+export const Indicator = (props: HTMLStyledProps<"svg">) => {
+  const checkbox = useCheckboxContext();
 
   return (
     <Checkbox.Indicator indeterminate={checkbox().indeterminate}>
@@ -43,5 +43,21 @@ export const Indicator = (props: HTMLStyledProps<'svg'>) => {
         ) : null}
       </styled.svg>
     </Checkbox.Indicator>
-  )
+  );
+};
+
+export interface CheckboxDemoProps {
+  variantProps?: Record<string, string>;
 }
+
+export const CheckboxDemo = (props: CheckboxDemoProps) => {
+  return (
+    <Root {...(props.variantProps ?? {})} checked>
+      <HiddenInput />
+      <Control>
+        <Indicator />
+      </Control>
+      <Label>DemoCheckbox label</Label>
+    </Root>
+  );
+};

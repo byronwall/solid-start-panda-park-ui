@@ -1,4 +1,4 @@
-import type { Accessor, JSX} from "solid-js";
+import type { Accessor, JSX } from "solid-js";
 import { splitProps } from "solid-js";
 import { Portal } from "solid-js/web";
 import { WrapWhen } from "./WrapWhen";

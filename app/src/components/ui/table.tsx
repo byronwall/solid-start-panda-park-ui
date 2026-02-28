@@ -1,16 +1,39 @@
-import { ark } from '@ark-ui/solid/factory'
-import type { ComponentProps } from 'solid-js'
-import { createStyleContext } from 'styled-system/jsx'
-import { table } from 'styled-system/recipes'
+import { ark } from "@ark-ui/solid/factory";
+import type { ComponentProps } from "solid-js";
+import { createStyleContext } from "styled-system/jsx";
+import { table } from "styled-system/recipes";
 
-const { withProvider, withContext } = createStyleContext(table)
+const { withProvider, withContext } = createStyleContext(table);
 
-export type RootProps = ComponentProps<typeof Root>
-export const Root = withProvider(ark.table, 'root')
-export const Body = withContext(ark.tbody, 'body')
-export const Caption = withContext(ark.caption, 'caption')
-export const Cell = withContext(ark.td, 'cell')
-export const Foot = withContext(ark.tfoot, 'foot')
-export const Head = withContext(ark.thead, 'head')
-export const Header = withContext(ark.th, 'header')
-export const Row = withContext(ark.tr, 'row')
+export type RootProps = ComponentProps<typeof Root>;
+export const Root = withProvider(ark.table, "root");
+export const Body = withContext(ark.tbody, "body");
+export const Caption = withContext(ark.caption, "caption");
+export const Cell = withContext(ark.td, "cell");
+export const Foot = withContext(ark.tfoot, "foot");
+export const Head = withContext(ark.thead, "head");
+export const Header = withContext(ark.th, "header");
+export const Row = withContext(ark.tr, "row");
+
+export interface TableDemoProps {
+  variantProps?: Record<string, string>;
+}
+
+export const TableDemo = (props: TableDemoProps) => {
+  return (
+    <Root {...(props.variantProps ?? {})}>
+      <Head>
+        <Row>
+          <Header>Col A</Header>
+          <Header>Col B</Header>
+        </Row>
+      </Head>
+      <Body>
+        <Row>
+          <Cell>Item</Cell>
+          <Cell>Value</Cell>
+        </Row>
+      </Body>
+    </Root>
+  );
+};

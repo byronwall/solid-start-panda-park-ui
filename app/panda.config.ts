@@ -1,3 +1,5 @@
+import { orange } from "./src/theme/colors/orange";
+import { blue } from "./src/theme/colors/blue";
 import { amber } from "./src/theme/colors/amber";
 import { green } from "./src/theme/colors/green";
 import { red } from "./src/theme/colors/red";
@@ -122,6 +124,8 @@ export default defineConfig({
           red: red,
           green: green,
           amber: amber,
+          blue: blue,
+          orange: orange,
         },
 
         shadows: shadows,
@@ -141,6 +145,11 @@ export default defineConfig({
         },
       },
     },
+  },
+
+  staticCss: {
+    // this pre-generates all recipes so that the comp explorer works
+    recipes: "*",
   },
 
   // The output directory for your css system

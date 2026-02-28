@@ -1,21 +1,23 @@
-import { ark } from '@ark-ui/solid'
-import { type ComponentProps, type JSX, Show, splitProps } from 'solid-js'
-import { createStyleContext } from 'styled-system/jsx'
-import { inputGroup } from 'styled-system/recipes'
+import { ark } from "@ark-ui/solid";
+import { type ComponentProps, type JSX, Show, splitProps } from "solid-js";
+import { createStyleContext } from "styled-system/jsx";
+import { inputGroup } from "styled-system/recipes";
+import { Input as DemoInput } from "./input";
+import { Kbd as DemoKbd } from "./kbd";
 
-const { withProvider, withContext } = createStyleContext(inputGroup)
+const { withProvider, withContext } = createStyleContext(inputGroup);
 
-type RootProps = ComponentProps<typeof Root>
-const Root = withProvider(ark.div, 'root')
-const Element = withContext(ark.div, 'element')
+type RootProps = ComponentProps<typeof Root>;
+const Root = withProvider(ark.div, "root");
+const Element = withContext(ark.div, "element");
 
 export interface InputGroupProps extends RootProps {
-  startElement?: JSX.Element | undefined
-  endElement?: JSX.Element | undefined
+  startElement?: JSX.Element | undefined;
+  endElement?: JSX.Element | undefined;
 }
 
 export const InputGroup = (props: InputGroupProps) => {
-  const [local, rest] = splitProps(props, ['startElement', 'endElement'])
+  const [local, rest] = splitProps(props, ["startElement", "endElement"]);
 
   return (
     <Root {...rest}>
@@ -31,5 +33,21 @@ export const InputGroup = (props: InputGroupProps) => {
         </Element>
       </Show>
     </Root>
-  )
+  );
+};
+
+export interface InputGroupDemoProps {
+  variantProps?: Record<string, string>;
 }
+
+export const InputGroupDemo = (props: InputGroupDemoProps) => {
+  return (
+    <InputGroup
+      {...(props.variantProps ?? {})}
+      endElement={<DemoKbd>⌘K</DemoKbd>}
+      width="64"
+    >
+      <DemoInput placeholder="Search" />
+    </InputGroup>
+  );
+};

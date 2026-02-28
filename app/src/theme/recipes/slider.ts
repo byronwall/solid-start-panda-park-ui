@@ -75,11 +75,11 @@ export const slider = defineSlotRecipe({
     size: {
       sm: {
         root: {
-          '--slider-thumb-size': 'sizes.5',
-          '--slider-track-size': 'sizes.2',
-          '--slider-marker-center': '8px',
+          '--slider-thumb-size': 'sizes.4',
+          '--slider-track-size': 'sizes.1',
+          '--slider-marker-center': '6px',
           '--slider-marker-size': 'sizes.1',
-          '--slider-marker-inset': '4px',
+          '--slider-marker-inset': '3px',
         },
       },
       md: {
@@ -93,10 +93,10 @@ export const slider = defineSlotRecipe({
       },
       lg: {
         root: {
-          '--slider-thumb-size': 'sizes.5',
-          '--slider-track-size': 'sizes.2',
-          '--slider-marker-center': '8px',
-          '--slider-marker-size': 'sizes.1',
+          '--slider-thumb-size': 'sizes.6',
+          '--slider-track-size': 'sizes.3',
+          '--slider-marker-center': '10px',
+          '--slider-marker-size': 'sizes.2',
           '--slider-marker-inset': '4px',
         },
       },
