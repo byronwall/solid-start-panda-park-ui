@@ -1,4 +1,11 @@
-import { Match, Switch, createSignal, onMount, splitProps, type JSX } from "solid-js";
+import {
+  Match,
+  Switch,
+  createSignal,
+  onMount,
+  splitProps,
+  type JSX,
+} from "solid-js";
 import { looksLikeMermaid } from "./markdown-code-utils";
 import { MarkdownCodeBlock } from "./markdown-code-block";
 import { MarkdownMermaidBlock } from "./markdown-mermaid-block";

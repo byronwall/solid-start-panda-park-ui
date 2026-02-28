@@ -1,5 +1,5 @@
-import { CompsExplorer } from '~/components/comps-explorer/CompsExplorer'
+import { CompsExplorer } from "~/components/comps-explorer/CompsExplorer";
 
 export default function CompsRoute() {
-  return <CompsExplorer />
+  return <CompsExplorer />;
 }

@@ -33,13 +33,17 @@ type ConsoleLogCaptureTopControlsProps = {
   copiedVisible: Accessor<boolean>;
 };
 
-export const ConsoleLogCaptureTopControls = (props: ConsoleLogCaptureTopControlsProps) => {
+export const ConsoleLogCaptureTopControls = (
+  props: ConsoleLogCaptureTopControlsProps,
+) => {
   return (
     <HStack gap="2" flexWrap="wrap">
       <Input
         size="xs"
         value={props.searchQuery()}
-        onInput={(event) => props.setSearchQuery((event.currentTarget as HTMLInputElement).value)}
+        onInput={(event) =>
+          props.setSearchQuery((event.currentTarget as HTMLInputElement).value)
+        }
         placeholder="Search visible logs..."
         fontFamily="mono"
         autocomplete="off"
@@ -58,7 +62,11 @@ export const ConsoleLogCaptureTopControls = (props: ConsoleLogCaptureTopControls
         <Input
           size="xs"
           value={props.maxKeepInput()}
-          onInput={(event) => props.setMaxKeepInput((event.currentTarget as HTMLInputElement).value)}
+          onInput={(event) =>
+            props.setMaxKeepInput(
+              (event.currentTarget as HTMLInputElement).value,
+            )
+          }
           onBlur={props.applyMaxKeep}
           onKeyDown={(event) => {
             if (event.key !== "Enter") return;
@@ -81,7 +89,11 @@ export const ConsoleLogCaptureTopControls = (props: ConsoleLogCaptureTopControls
         <Input
           size="xs"
           value={props.rowLimitInput()}
-          onInput={(event) => props.setRowLimitInput((event.currentTarget as HTMLInputElement).value)}
+          onInput={(event) =>
+            props.setRowLimitInput(
+              (event.currentTarget as HTMLInputElement).value,
+            )
+          }
           onBlur={props.normalizeRowLimitInput}
           onKeyDown={(event) => {
             if (event.key !== "Enter") return;
@@ -103,7 +115,9 @@ export const ConsoleLogCaptureTopControls = (props: ConsoleLogCaptureTopControls
       >
         <Checkbox.Root
           checked={props.samplePerPrefix()}
-          onCheckedChange={(details) => props.setSamplePerPrefix(details.checked === true)}
+          onCheckedChange={(details) =>
+            props.setSamplePerPrefix(details.checked === true)
+          }
         >
           <Checkbox.HiddenInput />
           <HStack gap="1" px="1.5">
@@ -120,7 +134,11 @@ export const ConsoleLogCaptureTopControls = (props: ConsoleLogCaptureTopControls
       <Tooltip
         portalled={false}
         contentProps={props.tooltipContentProps}
-        content={props.captureEnabled() ? "Disable console capture" : "Enable console capture"}
+        content={
+          props.captureEnabled()
+            ? "Disable console capture"
+            : "Enable console capture"
+        }
         showArrow
       >
         <Button
@@ -184,7 +202,10 @@ export const ConsoleLogCaptureTopControls = (props: ConsoleLogCaptureTopControls
             onClick={() => props.onCopyPrefixes()}
             disabled={props.copyPrefixesDisabled()}
           >
-            <Show when={props.copiedPrefixes()} fallback={<ListIcon size={12} />}>
+            <Show
+              when={props.copiedPrefixes()}
+              fallback={<ListIcon size={12} />}
+            >
               <CheckIcon size={12} />
             </Show>
           </IconButton>
@@ -210,7 +231,11 @@ export const ConsoleLogCaptureTopControls = (props: ConsoleLogCaptureTopControls
         <Tooltip
           portalled={false}
           contentProps={props.tooltipContentProps}
-          content={props.copiedVisible() ? "Copied visible logs" : "Copy visible logs JSON"}
+          content={
+            props.copiedVisible()
+              ? "Copied visible logs"
+              : "Copy visible logs JSON"
+          }
           showArrow
         >
           <IconButton
@@ -220,7 +245,10 @@ export const ConsoleLogCaptureTopControls = (props: ConsoleLogCaptureTopControls
             onClick={() => props.onCopyVisible()}
             disabled={props.visibleActionsDisabled()}
           >
-            <Show when={props.copiedVisible()} fallback={<CopyIcon size={12} />}>
+            <Show
+              when={props.copiedVisible()}
+              fallback={<CopyIcon size={12} />}
+            >
               <CheckIcon size={12} />
             </Show>
           </IconButton>

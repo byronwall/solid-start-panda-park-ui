@@ -61,7 +61,10 @@ export const buildSingleEntryJson = (entry: ConsoleCaptureEntry) => {
   );
 };
 
-export const buildPrefixesText = (rows: Array<[string, number]>, total: number) => {
+export const buildPrefixesText = (
+  rows: Array<[string, number]>,
+  total: number,
+) => {
   const lines = rows.map(([prefix, count]) =>
     prefix === "untyped" ? `[untyped] ${count}` : `[${prefix}] ${count}`,
   );

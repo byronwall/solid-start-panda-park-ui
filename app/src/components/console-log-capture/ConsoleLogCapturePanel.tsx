@@ -32,7 +32,9 @@ type ConsoleLogCapturePanelProps = {
 
 export const ConsoleLogCapturePanel = (props: ConsoleLogCapturePanelProps) => {
   const [prefixFilter, setPrefixFilter] = createSignal<string>("all");
-  const [expandedIds, setExpandedIds] = createSignal<Set<number>>(new Set<number>());
+  const [expandedIds, setExpandedIds] = createSignal<Set<number>>(
+    new Set<number>(),
+  );
   const [searchQuery, setSearchQuery] = createSignal("");
   const [maxKeepInput, setMaxKeepInput] = createSignal("1000");
   const [rowLimitInput, setRowLimitInput] = createSignal("200");
@@ -41,10 +43,17 @@ export const ConsoleLogCapturePanel = (props: ConsoleLogCapturePanelProps) => {
   const [copiedPrefixes, setCopiedPrefixes] = createSignal(false);
   const [copiedRowId, setCopiedRowId] = createSignal<number | null>(null);
 
-  const rowLimit = createMemo(() => parseBoundedInt(rowLimitInput(), 200, 1, 5_000));
+  const rowLimit = createMemo(() =>
+    parseBoundedInt(rowLimitInput(), 200, 1, 5_000),
+  );
 
   const applyMaxKeep = () => {
-    const next = parseBoundedInt(maxKeepInput(), consoleLogCaptureMaxEntries(), 1, 10_000);
+    const next = parseBoundedInt(
+      maxKeepInput(),
+      consoleLogCaptureMaxEntries(),
+      1,
+      10_000,
+    );
     setConsoleLogCaptureMaxEntries(next);
     setMaxKeepInput(String(next));
   };
@@ -76,13 +85,17 @@ export const ConsoleLogCapturePanel = (props: ConsoleLogCapturePanelProps) => {
   const filteredEntries = createMemo(() => {
     const filter = prefixFilter();
     if (filter === "all") return consoleLogEntries();
-    if (filter === "untyped") return consoleLogEntries().filter((entry) => !entry.prefix);
+    if (filter === "untyped")
+      return consoleLogEntries().filter((entry) => !entry.prefix);
     return consoleLogEntries().filter((entry) => entry.prefix === filter);
   });
 
   createEffect(() => {
     const current = prefixFilter();
-    const hasCurrent = current === "all" || current === "untyped" || prefixes().includes(current);
+    const hasCurrent =
+      current === "all" ||
+      current === "untyped" ||
+      prefixes().includes(current);
     if (!hasCurrent) setPrefixFilter("all");
   });
 
@@ -94,7 +107,8 @@ export const ConsoleLogCapturePanel = (props: ConsoleLogCapturePanelProps) => {
     const q = searchQuery().trim().toLowerCase();
     if (!q) return filteredEntries();
     return filteredEntries().filter((entry) => {
-      const haystack = `${entry.summary}\n${entry.details}\n${entry.prefix ?? ""}\n${entry.level}`.toLowerCase();
+      const haystack =
+        `${entry.summary}\n${entry.details}\n${entry.prefix ?? ""}\n${entry.level}`.toLowerCase();
       return haystack.includes(q);
     });
   });
@@ -122,7 +136,9 @@ export const ConsoleLogCapturePanel = (props: ConsoleLogCapturePanelProps) => {
       const key = entry.prefix ?? "untyped";
       counts.set(key, (counts.get(key) ?? 0) + 1);
     }
-    return [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+    return [...counts.entries()].sort(
+      (a, b) => b[1] - a[1] || a[0].localeCompare(b[0]),
+    );
   });
 
   const toggleExpanded = (id: number) => {
@@ -145,7 +161,11 @@ export const ConsoleLogCapturePanel = (props: ConsoleLogCapturePanelProps) => {
   };
 
   const copyVisibleLogs = async () => {
-    const payload = buildVisibleJson(displayedEntries(), prefixFilter(), searchQuery());
+    const payload = buildVisibleJson(
+      displayedEntries(),
+      prefixFilter(),
+      searchQuery(),
+    );
     const ok = await copyText(payload);
     if (!ok) return;
     setCopiedVisible(true);
@@ -173,9 +193,12 @@ export const ConsoleLogCapturePanel = (props: ConsoleLogCapturePanelProps) => {
 
   const downloadVisibleLogs = () => {
     if (typeof window === "undefined") return;
-    const blob = new Blob([buildVisibleJson(displayedEntries(), prefixFilter(), searchQuery())], {
-      type: "application/json",
-    });
+    const blob = new Blob(
+      [buildVisibleJson(displayedEntries(), prefixFilter(), searchQuery())],
+      {
+        type: "application/json",
+      },
+    );
     const url = window.URL.createObjectURL(blob);
     const anchor = window.document.createElement("a");
     anchor.href = url;
@@ -192,8 +215,15 @@ export const ConsoleLogCapturePanel = (props: ConsoleLogCapturePanelProps) => {
 
     console.log(`[test] plain message @ ${stamp}`);
     console.info("[api] request", { method: "GET", path: "/api/docs", ms: 87 });
-    console.warn("[auth] token expiring soon", { userId: "u_123", inSeconds: 45 });
-    console.error("[db] failed query", { code: "P2025", retryable: false, error: testErr });
+    console.warn("[auth] token expiring soon", {
+      userId: "u_123",
+      inSeconds: 45,
+    });
+    console.error("[db] failed query", {
+      code: "P2025",
+      retryable: false,
+      error: testErr,
+    });
     console.debug("[vite] hmr", {
       file: "/src/components/console-log-capture/ConsoleLogCapturePanel.tsx",
     });
@@ -202,15 +232,25 @@ export const ConsoleLogCapturePanel = (props: ConsoleLogCapturePanelProps) => {
       { service: "search", status: "ok", ms: 41 },
       { service: "index", status: "degraded", ms: 212 },
     ]);
-    console.log("[metrics] counters", { cacheHit: 31, cacheMiss: 7, ratio: 0.815 });
+    console.log("[metrics] counters", {
+      cacheHit: 31,
+      cacheMiss: 7,
+      ratio: 0.815,
+    });
     console.log("[selection] ids", ["a12", "a14", "b02"]);
     console.log("[render] nested", {
       widget: "console-panel",
       options: { dense: true, monospace: true },
     });
     console.info("No prefix entry for untyped filter");
-    console.warn("[feature-flag] toggles", { logPanel: true, debugCapture: true });
-    console.error("[network] timeout", { endpoint: "/api/docs", timeoutMs: 5000 });
+    console.warn("[feature-flag] toggles", {
+      logPanel: true,
+      debugCapture: true,
+    });
+    console.error("[network] timeout", {
+      endpoint: "/api/docs",
+      timeoutMs: 5000,
+    });
   };
 
   return (
@@ -232,9 +272,16 @@ export const ConsoleLogCapturePanel = (props: ConsoleLogCapturePanelProps) => {
           </Tooltip>
         </Box>
 
-        <Stack px="4" py="2.5" gap="2" borderBottomWidth="1px" borderColor="border">
+        <Stack
+          px="4"
+          py="2.5"
+          gap="2"
+          borderBottomWidth="1px"
+          borderColor="border"
+        >
           <Text fontSize="xs" color="fg.muted">
-            Captures browser console output with prefix filters and expandable row details.
+            Captures browser console output with prefix filters and expandable
+            row details.
           </Text>
 
           <ConsoleLogCaptureTopControls
@@ -250,7 +297,9 @@ export const ConsoleLogCapturePanel = (props: ConsoleLogCapturePanelProps) => {
             samplePerPrefix={samplePerPrefix}
             setSamplePerPrefix={setSamplePerPrefix}
             captureEnabled={consoleLogCaptureEnabled}
-            onToggleCapture={() => setConsoleLogCaptureEnabled(!consoleLogCaptureEnabled())}
+            onToggleCapture={() =>
+              setConsoleLogCaptureEnabled(!consoleLogCaptureEnabled())
+            }
             onClear={clearConsoleLogEntries}
             clearDisabled={() => consoleLogEntries().length === 0}
             onEmitTestLogs={emitTestLogs}

@@ -1,5 +1,11 @@
 import { Show, splitProps } from "solid-js";
-import { CheckIcon, CopyIcon, DownloadIcon, ZoomInIcon, ZoomOutIcon } from "lucide-solid";
+import {
+  CheckIcon,
+  CopyIcon,
+  DownloadIcon,
+  ZoomInIcon,
+  ZoomOutIcon,
+} from "lucide-solid";
 import { Button } from "~/components/ui/button";
 import { markdownStyles } from "./markdown-styles";
 

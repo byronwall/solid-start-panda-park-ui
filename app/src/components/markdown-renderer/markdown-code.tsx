@@ -20,7 +20,9 @@ export function MarkdownCode(codeProps: MarkdownCodeProps) {
     "inline",
   ]);
   const resolvedChildren = children(() => local.children);
-  const codeText = createMemo(() => normalizeCodeText(resolvedChildren(), local.node));
+  const codeText = createMemo(() =>
+    normalizeCodeText(resolvedChildren(), local.node),
+  );
   const languageClass = createMemo(() => local.class ?? local.className);
   const isBlock = createMemo(() => isBlockCode(languageClass(), local.inline));
   const language = createMemo(() => parseLanguage(languageClass()));

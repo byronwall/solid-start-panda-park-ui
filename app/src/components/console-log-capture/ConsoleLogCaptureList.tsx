@@ -54,15 +54,27 @@ export const ConsoleLogCaptureList = (props: ConsoleLogCaptureListProps) => {
                   {formatTime(entry.timestamp)}
                 </Text>
                 <span class={levelChipClass(entry.level)}>{entry.level}</span>
-                <Show when={entry.prefix}>{(prefix) => <span class={prefixChipClass}>[{prefix()}]</span>}</Show>
-                <Text fontSize="sm" flex="1" truncate textAlign="left" class={rowTitleClass}>
+                <Show when={entry.prefix}>
+                  {(prefix) => (
+                    <span class={prefixChipClass}>[{prefix()}]</span>
+                  )}
+                </Show>
+                <Text
+                  fontSize="sm"
+                  flex="1"
+                  truncate
+                  textAlign="left"
+                  class={rowTitleClass}
+                >
                   {entry.summary}
                 </Text>
                 <Tooltip
                   portalled={false}
                   contentProps={props.tooltipContentProps}
                   content={
-                    props.copiedRowId() === entry.id ? "Copied row JSON" : "Copy this row JSON"
+                    props.copiedRowId() === entry.id
+                      ? "Copied row JSON"
+                      : "Copy this row JSON"
                   }
                   showArrow
                 >
@@ -77,7 +89,10 @@ export const ConsoleLogCaptureList = (props: ConsoleLogCaptureListProps) => {
                       props.onCopyEntry(entry);
                     }}
                   >
-                    <Show when={props.copiedRowId() === entry.id} fallback={<CopyIcon size={12} />}>
+                    <Show
+                      when={props.copiedRowId() === entry.id}
+                      fallback={<CopyIcon size={12} />}
+                    >
                       <CheckIcon size={12} />
                     </Show>
                   </IconButton>

@@ -13,7 +13,9 @@ const isEditableTarget = (target: EventTarget | null) => {
   );
 };
 
-export function ConsoleLogCaptureProvider(props: ConsoleLogCaptureProviderProps) {
+export function ConsoleLogCaptureProvider(
+  props: ConsoleLogCaptureProviderProps,
+) {
   const [isOpen, setIsOpen] = createSignal(false);
 
   onMount(() => {

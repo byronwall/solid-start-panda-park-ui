@@ -38,7 +38,8 @@ const [maxEntries, setMaxEntries] = createSignal(DEFAULT_MAX_ENTRIES);
 
 let nextId = 1;
 let patched = false;
-let originals: Partial<Record<ConsoleCaptureLevel, (...args: any[]) => void>> = {};
+let originals: Partial<Record<ConsoleCaptureLevel, (...args: any[]) => void>> =
+  {};
 
 const safeReadEnabledFromStorage = () => {
   if (typeof window === "undefined") return false;
@@ -76,7 +77,8 @@ const safeJsonStringify = (value: unknown, pretty: boolean, maxLen: number) => {
           stack: item.stack,
         };
       }
-      if (typeof item === "function") return `[Function ${item.name || "anonymous"}]`;
+      if (typeof item === "function")
+        return `[Function ${item.name || "anonymous"}]`;
       if (typeof item === "symbol") return item.toString();
       if (item && typeof item === "object") {
         if (seen.has(item)) return "[Circular]";
@@ -110,7 +112,11 @@ const formatValue = (value: unknown, pretty: boolean) => {
   }
 };
 
-const normalizeForJson = (value: unknown, seen: WeakSet<object>, depth: number): unknown => {
+const normalizeForJson = (
+  value: unknown,
+  seen: WeakSet<object>,
+  depth: number,
+): unknown => {
   if (
     value === null ||
     typeof value === "string" ||
@@ -122,7 +128,8 @@ const normalizeForJson = (value: unknown, seen: WeakSet<object>, depth: number):
   if (typeof value === "undefined") return "[undefined]";
   if (typeof value === "bigint") return `${value.toString()}n`;
   if (typeof value === "symbol") return value.toString();
-  if (typeof value === "function") return `[Function ${value.name || "anonymous"}]`;
+  if (typeof value === "function")
+    return `[Function ${value.name || "anonymous"}]`;
   if (value instanceof Error) {
     return {
       name: value.name,
@@ -136,7 +143,9 @@ const normalizeForJson = (value: unknown, seen: WeakSet<object>, depth: number):
   seen.add(value);
 
   if (Array.isArray(value)) {
-    return value.slice(0, 100).map((item) => normalizeForJson(item, seen, depth + 1));
+    return value
+      .slice(0, 100)
+      .map((item) => normalizeForJson(item, seen, depth + 1));
   }
 
   const obj = value as Record<string, unknown>;
@@ -248,7 +257,9 @@ export const clearConsoleLogEntries = () => {
 };
 
 export const setConsoleLogCaptureMaxEntries = (nextMax: number) => {
-  const parsed = Number.isFinite(nextMax) ? Math.trunc(nextMax) : DEFAULT_MAX_ENTRIES;
+  const parsed = Number.isFinite(nextMax)
+    ? Math.trunc(nextMax)
+    : DEFAULT_MAX_ENTRIES;
   const safe = Math.max(1, Math.min(parsed, 10_000));
   setMaxEntries(safe);
   setEntries((prev) => (prev.length > safe ? prev.slice(0, safe) : prev));

@@ -1,8 +1,10 @@
 import { codeToHtml } from "shiki";
+import type * as MermaidModule from "mermaid";
 
 const SHIKI_THEME = "github-light";
 
-let mermaidModulePromise: Promise<typeof import("mermaid")> | null = null;
+type MermaidImport = typeof MermaidModule;
+let mermaidModulePromise: Promise<MermaidImport> | null = null;
 
 export function isBlockCode(className: unknown, inlineProp: unknown): boolean {
   const hasLanguageClass =
@@ -58,7 +60,7 @@ export async function getShikiHighlightedCode(
   }
 }
 
-export async function loadMermaid(): Promise<typeof import("mermaid")> {
+export async function loadMermaid(): Promise<MermaidImport> {
   if (!mermaidModulePromise) {
     mermaidModulePromise = import("mermaid");
   }

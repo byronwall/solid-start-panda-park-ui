@@ -1,4 +1,10 @@
-import { Show, createEffect, createSignal, onCleanup, splitProps } from "solid-js";
+import {
+  Show,
+  createEffect,
+  createSignal,
+  onCleanup,
+  splitProps,
+} from "solid-js";
 import { loadMermaid } from "./markdown-code-utils";
 import { MarkdownMermaidActionTray } from "./markdown-mermaid-action-tray";
 import { MarkdownMermaidDialog } from "./markdown-mermaid-dialog";

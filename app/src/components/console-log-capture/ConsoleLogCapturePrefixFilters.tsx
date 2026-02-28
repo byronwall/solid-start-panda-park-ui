@@ -14,7 +14,9 @@ type ConsoleLogCapturePrefixFiltersProps = {
   overflowDeps: Accessor<number>;
 };
 
-export const ConsoleLogCapturePrefixFilters = (props: ConsoleLogCapturePrefixFiltersProps) => {
+export const ConsoleLogCapturePrefixFilters = (
+  props: ConsoleLogCapturePrefixFiltersProps,
+) => {
   let prefixPillsEl: HTMLDivElement | undefined;
   const [hasHiddenPrefixes, setHasHiddenPrefixes] = createSignal(false);
 

@@ -68,7 +68,10 @@ export function useMermaidViewport() {
       1,
     );
     const nextScale = clampMermaidScale(
-      Math.min(viewportWidth / dimensions.width, viewportHeight / dimensions.height),
+      Math.min(
+        viewportWidth / dimensions.width,
+        viewportHeight / dimensions.height,
+      ),
     );
     console.log("Markdown:mermaid:fitToViewport", {
       nextScale,

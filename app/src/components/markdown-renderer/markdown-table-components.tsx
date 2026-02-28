@@ -59,7 +59,7 @@ export const markdownTableComponents = {
   ),
   th: (thProps) => {
     // TODO:AS_ANY - solid-markdown passes props with incompatible ref types
-    const { isHeader, ...restProps } = thProps as any;
+    const { _isHeader, ...restProps } = thProps as any;
     return (
       <th
         class={css({
@@ -75,7 +75,7 @@ export const markdownTableComponents = {
   },
   td: (tdProps) => {
     // TODO:AS_ANY - solid-markdown passes props with incompatible ref types
-    const { isHeader, ...restProps } = tdProps as any;
+    const { _isHeader, ...restProps } = tdProps as any;
     return (
       <td
         class={css({

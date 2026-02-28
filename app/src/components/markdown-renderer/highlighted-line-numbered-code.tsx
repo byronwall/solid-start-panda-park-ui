@@ -17,7 +17,9 @@ export function HighlightedLineNumberedCode(
   props: HighlightedLineNumberedCodeProps,
 ) {
   const [local, rest] = splitProps(props, ["language", "codeText"]);
-  const [highlightedHtml, setHighlightedHtml] = createSignal<string | null>(null);
+  const [highlightedHtml, setHighlightedHtml] = createSignal<string | null>(
+    null,
+  );
 
   createEffect(() => {
     const language = local.language;

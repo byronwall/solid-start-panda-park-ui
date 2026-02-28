@@ -12,7 +12,12 @@ type MarkdownMermaidActionTrayProps = {
 export function MarkdownMermaidActionTray(
   props: MarkdownMermaidActionTrayProps,
 ) {
-  const [local] = splitProps(props, ["isCopied", "onCopy", "onDownload", "onExpand"]);
+  const [local] = splitProps(props, [
+    "isCopied",
+    "onCopy",
+    "onDownload",
+    "onExpand",
+  ]);
 
   return (
     <div class={markdownStyles.codeActionTray}>

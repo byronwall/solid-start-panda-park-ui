@@ -160,15 +160,15 @@ export const markdownStyles = {
   blockCode: css({
     "--md-code-line-digits": "2",
     "--md-code-line-gap": "0.5rem",
-    "--md-code-line-column": "calc(var(--md-code-line-digits) * 0.72ch + 0.85rem)",
+    "--md-code-line-column":
+      "calc(var(--md-code-line-digits) * 0.72ch + 0.85rem)",
     fontFamily: "mono",
     fontSize: "sm",
     lineHeight: "relaxed",
     display: "block",
     "& .code-line": {
       display: "block",
-      paddingLeft:
-        "calc(var(--md-code-line-column) + var(--md-code-line-gap))",
+      paddingLeft: "calc(var(--md-code-line-column) + var(--md-code-line-gap))",
       position: "relative",
       minHeight: "1.4em",
       whiteSpace: "pre",

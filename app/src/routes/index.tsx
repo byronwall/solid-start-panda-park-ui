@@ -1,8 +1,8 @@
-import { ArrowRight } from 'lucide-solid'
-import { AbsoluteCenter } from '~/components/ui/absolute-center'
-import { Button } from '~/components/ui/button'
-import { Link } from '~/components/ui/link'
-import { Box, HStack, VStack } from 'styled-system/jsx'
+import { ArrowRight } from "lucide-solid";
+import { AbsoluteCenter } from "~/components/ui/absolute-center";
+import { Button } from "~/components/ui/button";
+import { Link } from "~/components/ui/link";
+import { Box, HStack, VStack } from "styled-system/jsx";
 
 export default function HomeRoute() {
   return (
@@ -28,7 +28,6 @@ export default function HomeRoute() {
           </HStack>
         </VStack>
       </AbsoluteCenter>
-
     </>
-  )
+  );
 }
