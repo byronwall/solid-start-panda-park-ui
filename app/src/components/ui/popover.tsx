@@ -45,8 +45,12 @@ export const PopoverDemo = (props: PopoverDemoProps) => {
       />
       <Positioner>
         <Content>
-          <Title>Quick Actions</Title>
-          <Description>Popover content preview</Description>
+          <Header>
+            <Title>Quick Actions</Title>
+          </Header>
+          <Body>
+            <Description>Popover content preview</Description>
+          </Body>
         </Content>
       </Positioner>
     </Root>

@@ -2,6 +2,7 @@ import { ColorPicker } from "@ark-ui/solid/color-picker";
 import type { ComponentProps } from "solid-js";
 import { createStyleContext } from "styled-system/jsx";
 import { colorPicker } from "styled-system/recipes";
+import { Button as DemoButton } from "./button";
 
 const { withProvider, withContext } = createStyleContext(colorPicker);
 
@@ -75,3 +76,36 @@ export const ValueText = withContext(ColorPicker.ValueText, "valueText");
 export const View = withContext(ColorPicker.View, "view");
 
 export { ColorPickerContext as Context } from "@ark-ui/solid/color-picker";
+
+export interface ColorPickerDemoProps {
+  variantProps?: Record<string, string>;
+}
+
+export const ColorPickerDemo = (props: ColorPickerDemoProps) => {
+  return (
+    <Root {...(props.variantProps ?? {})} positioning={{ placement: "bottom-start" }}>
+      <Label>Accent color</Label>
+      <Control>
+        <Trigger
+          asChild={(triggerProps) => (
+            <DemoButton {...triggerProps()}>Open Color Picker</DemoButton>
+          )}
+        />
+        <ValueSwatch />
+        <ValueText />
+      </Control>
+      <Positioner>
+        <Content>
+          <Area>
+            <AreaBackground />
+            <AreaThumb />
+          </Area>
+          <ChannelSlider channel="hue">
+            <ChannelSliderTrack />
+            <ChannelSliderThumb />
+          </ChannelSlider>
+        </Content>
+      </Positioner>
+    </Root>
+  );
+};

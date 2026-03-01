@@ -2,6 +2,7 @@ import { DatePicker } from "@ark-ui/solid/date-picker";
 import type { ComponentProps } from "solid-js";
 import { createStyleContext } from "styled-system/jsx";
 import { datePicker } from "styled-system/recipes";
+import { Button as DemoButton } from "./button";
 
 const { withProvider, withContext } = createStyleContext(datePicker);
 
@@ -42,3 +43,34 @@ export const ViewTrigger = withContext(DatePicker.ViewTrigger, "viewTrigger");
 export const YearSelect = withContext(DatePicker.YearSelect, "yearSelect");
 
 export { DatePickerContext as Context } from "@ark-ui/solid/date-picker";
+
+export interface DatePickerDemoProps {
+  variantProps?: Record<string, string>;
+}
+
+export const DatePickerDemo = (props: DatePickerDemoProps) => {
+  return (
+    <Root {...(props.variantProps ?? {})} positioning={{ placement: "bottom-start" }}>
+      <Label>Date</Label>
+      <Control>
+        <Trigger
+          asChild={(triggerProps) => (
+            <DemoButton {...triggerProps()}>Open Calendar</DemoButton>
+          )}
+        />
+      </Control>
+      <Positioner>
+        <Content>
+          <View view="day">
+            <ViewControl>
+              <PrevTrigger>Prev</PrevTrigger>
+              <ViewTrigger>Current Month</ViewTrigger>
+              <NextTrigger>Next</NextTrigger>
+            </ViewControl>
+            <RangeText />
+          </View>
+        </Content>
+      </Positioner>
+    </Root>
+  );
+};

@@ -12,6 +12,8 @@ import { ClipboardDemo } from "./clipboard";
 import { CodeDemo } from "./code";
 import { CollapsibleDemo } from "./collapsible";
 import { ComboboxDemo } from "./combobox";
+import { ColorPickerDemo } from "./color-picker";
+import { DatePickerDemo } from "./date-picker";
 import { DialogDemo } from "./dialog";
 import { DrawerDemo } from "./drawer";
 import { EditableDemo } from "./editable";
@@ -78,7 +80,9 @@ export const DEMO_COMPONENTS: Record<
   clipboard: (props) => <ClipboardDemo variantProps={props.variantProps} />,
   code: (props) => <CodeDemo variantProps={props.variantProps} />,
   collapsible: (props) => <CollapsibleDemo variantProps={props.variantProps} />,
+  colorPicker: (props) => <ColorPickerDemo variantProps={props.variantProps} />,
   combobox: (props) => <ComboboxDemo variantProps={props.variantProps} />,
+  datePicker: (props) => <DatePickerDemo variantProps={props.variantProps} />,
   dialog: (props) => <DialogDemo variantProps={props.variantProps} />,
   drawer: (props) => <DrawerDemo variantProps={props.variantProps} />,
   editable: (props) => <EditableDemo variantProps={props.variantProps} />,
