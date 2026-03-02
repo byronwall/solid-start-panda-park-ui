@@ -10,7 +10,10 @@ import { ErrorOverlayPlayground } from "./ErrorOverlayPlayground";
 import { RecipeExplorerPanel } from "./RecipeExplorerPanel";
 import {
   DESIGN_SYSTEM_COLORS_KEY,
-  DESIGN_SYSTEM_SIZES_KEY,
+  DESIGN_SYSTEM_EFFECTS_KEY,
+  DESIGN_SYSTEM_LAYOUT_KEY,
+  DESIGN_SYSTEM_MOTION_KEY,
+  DESIGN_SYSTEM_TYPOGRAPHY_KEY,
   ERROR_OVERLAY_COMPONENT_KEY,
   friendlyName,
   getVariantMap,
@@ -24,12 +27,28 @@ import {
 import { recipes } from "~/theme/recipes";
 
 const isDesignSystemKey = (value: string) =>
-  value === DESIGN_SYSTEM_COLORS_KEY || value === DESIGN_SYSTEM_SIZES_KEY;
+  value === DESIGN_SYSTEM_COLORS_KEY ||
+  value === DESIGN_SYSTEM_LAYOUT_KEY ||
+  value === DESIGN_SYSTEM_TYPOGRAPHY_KEY ||
+  value === DESIGN_SYSTEM_MOTION_KEY ||
+  value === DESIGN_SYSTEM_EFFECTS_KEY ||
+  value === "design-system-sizes" ||
+  value === "design-system-theme";
 
 const getDesignSystemSection = (
   selectedComponent: string,
 ): DesignSystemSection =>
-  selectedComponent === DESIGN_SYSTEM_SIZES_KEY ? "sizes" : "colors";
+  selectedComponent === DESIGN_SYSTEM_LAYOUT_KEY ||
+  selectedComponent === "design-system-sizes" ||
+  selectedComponent === "design-system-theme"
+    ? "layout"
+    : selectedComponent === DESIGN_SYSTEM_TYPOGRAPHY_KEY
+      ? "typography"
+      : selectedComponent === DESIGN_SYSTEM_MOTION_KEY
+        ? "motion"
+        : selectedComponent === DESIGN_SYSTEM_EFFECTS_KEY
+          ? "effects"
+          : "colors";
 
 export const CompsExplorer = () => {
   const location = useLocation();
@@ -64,7 +83,7 @@ export const CompsExplorer = () => {
   const selectedComponent = createMemo(() => {
     const fromQuery = location.query.component;
     if (typeof fromQuery === "string") return fromQuery;
-    return DESIGN_SYSTEM_COLORS_KEY;
+    return DESIGN_SYSTEM_LAYOUT_KEY;
   });
 
   const selectedRecipeKey = createMemo(() => {

@@ -5,7 +5,10 @@ import { Box, HStack, VStack } from "styled-system/jsx";
 import { Button } from "~/components/ui/button";
 import {
   DESIGN_SYSTEM_COLORS_KEY,
-  DESIGN_SYSTEM_SIZES_KEY,
+  DESIGN_SYSTEM_EFFECTS_KEY,
+  DESIGN_SYSTEM_LAYOUT_KEY,
+  DESIGN_SYSTEM_MOTION_KEY,
+  DESIGN_SYSTEM_TYPOGRAPHY_KEY,
   ERROR_OVERLAY_COMPONENT_KEY,
   type RecipeMeta,
 } from "./compsExplorer.shared";
@@ -69,12 +72,36 @@ export const CompsExplorerSidebar = (props: CompsExplorerSidebarProps) => {
               Colors
             </A>
             <A
-              href={`/comps?component=${DESIGN_SYSTEM_SIZES_KEY}`}
+              href={`/comps?component=${DESIGN_SYSTEM_LAYOUT_KEY}`}
               class={navLinkClass(
-                props.selectedComponent === DESIGN_SYSTEM_SIZES_KEY,
+                props.selectedComponent === DESIGN_SYSTEM_LAYOUT_KEY,
               )}
             >
-              Sizes
+              Layout
+            </A>
+            <A
+              href={`/comps?component=${DESIGN_SYSTEM_TYPOGRAPHY_KEY}`}
+              class={navLinkClass(
+                props.selectedComponent === DESIGN_SYSTEM_TYPOGRAPHY_KEY,
+              )}
+            >
+              Typography
+            </A>
+            <A
+              href={`/comps?component=${DESIGN_SYSTEM_MOTION_KEY}`}
+              class={navLinkClass(
+                props.selectedComponent === DESIGN_SYSTEM_MOTION_KEY,
+              )}
+            >
+              Motion
+            </A>
+            <A
+              href={`/comps?component=${DESIGN_SYSTEM_EFFECTS_KEY}`}
+              class={navLinkClass(
+                props.selectedComponent === DESIGN_SYSTEM_EFFECTS_KEY,
+              )}
+            >
+              Effects
             </A>
           </HStack>
         </VStack>

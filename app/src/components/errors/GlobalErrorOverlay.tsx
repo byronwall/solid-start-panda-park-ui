@@ -1,5 +1,5 @@
 import type { Accessor } from "solid-js";
-import { Show } from "solid-js";
+import { Show, createSignal, onCleanup } from "solid-js";
 import { Box, Flex, Stack } from "styled-system/jsx";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
@@ -31,10 +31,67 @@ const getErrorStack = (error: unknown) => {
   return "";
 };
 
+const getErrorName = (error: unknown) => {
+  if (error instanceof Error) return error.name;
+  if (typeof error === "string") return "Error";
+  if (error && typeof error === "object") return "Object";
+  return typeof error;
+};
+
+const serializeUnknownError = (error: unknown) => {
+  if (error instanceof Error) {
+    return {
+      name: error.name,
+      message: error.message,
+      stack: error.stack ?? null,
+    };
+  }
+  if (typeof error === "string") return error;
+  if (!error) return null;
+  try {
+    return JSON.parse(JSON.stringify(error));
+  } catch {
+    return String(error);
+  }
+};
+
 export function GlobalErrorOverlay(props: GlobalErrorOverlayProps) {
   const isOpen = () => props.open?.() ?? true;
   const detailsMessage = () => getErrorMessage(props.error);
   const detailsStack = () => getErrorStack(props.error);
+  const [copyState, setCopyState] = createSignal<"idle" | "copied" | "failed">(
+    "idle",
+  );
+  let copyStateTimer: ReturnType<typeof setTimeout> | undefined;
+
+  onCleanup(() => {
+    if (copyStateTimer !== undefined) clearTimeout(copyStateTimer);
+  });
+
+  const copyJsonSummary = async () => {
+    if (typeof window === "undefined") return;
+    const payload = {
+      title: props.title,
+      message: props.message,
+      error: {
+        name: getErrorName(props.error),
+        message: detailsMessage() || null,
+        stackTrace: detailsStack() || null,
+        raw: serializeUnknownError(props.error),
+      },
+      capturedAt: new Date().toISOString(),
+    };
+
+    try {
+      await navigator.clipboard.writeText(JSON.stringify(payload, null, 2));
+      setCopyState("copied");
+    } catch {
+      setCopyState("failed");
+    }
+
+    if (copyStateTimer !== undefined) clearTimeout(copyStateTimer);
+    copyStateTimer = setTimeout(() => setCopyState("idle"), 1400);
+  };
 
   return (
     <Show when={isOpen()}>
@@ -114,9 +171,26 @@ export function GlobalErrorOverlay(props: GlobalErrorOverlayProps) {
                 </details>
               </Show>
 
-              <Flex justify="flex-end" gap="2">
-                <Show when={props.onSecondaryAction && props.secondaryActionLabel}>
-                  <Button variant="outline" onClick={() => props.onSecondaryAction?.()}>
+              <Flex justify="flex-end" gap="2" flexWrap="wrap">
+                <Show when={detailsMessage() || detailsStack()}>
+                  <Button
+                    variant="outline"
+                    onClick={() => void copyJsonSummary()}
+                  >
+                    {copyState() === "copied"
+                      ? "Copied JSON"
+                      : copyState() === "failed"
+                        ? "Copy failed"
+                        : "Copy JSON"}
+                  </Button>
+                </Show>
+                <Show
+                  when={props.onSecondaryAction && props.secondaryActionLabel}
+                >
+                  <Button
+                    variant="outline"
+                    onClick={() => props.onSecondaryAction?.()}
+                  >
                     {props.secondaryActionLabel}
                   </Button>
                 </Show>

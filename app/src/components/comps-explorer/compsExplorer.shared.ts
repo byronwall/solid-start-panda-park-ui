@@ -17,7 +17,10 @@ export type RecipeMeta = {
 
 export const ERROR_OVERLAY_COMPONENT_KEY = "error-overlay";
 export const DESIGN_SYSTEM_COLORS_KEY = "design-system-colors";
-export const DESIGN_SYSTEM_SIZES_KEY = "design-system-sizes";
+export const DESIGN_SYSTEM_LAYOUT_KEY = "design-system-layout";
+export const DESIGN_SYSTEM_TYPOGRAPHY_KEY = "design-system-typography";
+export const DESIGN_SYSTEM_MOTION_KEY = "design-system-motion";
+export const DESIGN_SYSTEM_EFFECTS_KEY = "design-system-effects";
 
 export const friendlyName = (value: string) =>
   value
