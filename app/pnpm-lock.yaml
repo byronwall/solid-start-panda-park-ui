@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
+  '@pandacss/generator@1.7.2':
+    hash: cqaryrj2iwus2vxh6b4cuvkfma
+    path: patches/@pandacss__generator@1.7.2.patch
   vinxi@0.5.10:
     hash: 7akjtznxlmuo54osy6ozzk74la
     path: patches/vinxi@0.5.10.patch
@@ -5794,7 +5797,7 @@ snapshots:
       - jsdom
       - typescript
 
-  '@pandacss/generator@1.7.2':
+  '@pandacss/generator@1.7.2(patch_hash=cqaryrj2iwus2vxh6b4cuvkfma)':
     dependencies:
       '@pandacss/core': 1.7.2
       '@pandacss/is-valid-prop': 1.7.2
@@ -5819,7 +5822,7 @@ snapshots:
     dependencies:
       '@pandacss/config': 1.7.2
       '@pandacss/core': 1.7.2
-      '@pandacss/generator': 1.7.2
+      '@pandacss/generator': 1.7.2(patch_hash=cqaryrj2iwus2vxh6b4cuvkfma)
       '@pandacss/logger': 1.7.2
       '@pandacss/parser': 1.7.2(typescript@5.9.3)
       '@pandacss/reporter': 1.7.2
@@ -5885,7 +5888,7 @@ snapshots:
   '@pandacss/reporter@1.7.2':
     dependencies:
       '@pandacss/core': 1.7.2
-      '@pandacss/generator': 1.7.2
+      '@pandacss/generator': 1.7.2(patch_hash=cqaryrj2iwus2vxh6b4cuvkfma)
       '@pandacss/logger': 1.7.2
       '@pandacss/shared': 1.7.2
       '@pandacss/types': 1.7.2
