@@ -1,11 +1,18 @@
 import { Combobox, useComboboxItemContext } from "@ark-ui/solid/combobox";
+import { useListCollection } from "@ark-ui/solid/collection";
 import { ark } from "@ark-ui/solid/factory";
+import { useFilter } from "@ark-ui/solid/locale";
 import { CheckIcon, ChevronsUpDownIcon, XIcon } from "lucide-solid";
-import { Show } from "solid-js";
-import { createStyleContext, type HTMLStyledProps } from "styled-system/jsx";
+import { For, Show } from "solid-js";
+import { Portal } from "solid-js/web";
+import {
+  Box,
+  HStack,
+  VStack,
+  createStyleContext,
+  type HTMLStyledProps,
+} from "styled-system/jsx";
 import { type ComboboxVariantProps, combobox } from "styled-system/recipes";
-import { Input as DemoInput } from "./input";
-import { createListCollection as demoCreateComboboxCollection } from "@ark-ui/solid/combobox";
 
 const { withProvider, withContext } = createStyleContext(combobox);
 
@@ -63,43 +70,122 @@ export const ItemIndicator = (props: HTMLStyledProps<"div">) => {
 
 export interface ComboboxDemoProps {
   variantProps?: Record<string, string>;
-  inputValue?: string;
 }
 
 export const ComboboxDemo = (props: ComboboxDemoProps) => {
-  const collection = demoCreateComboboxCollection({
-    items: [
-      { label: "React", value: "react" },
-      { label: "Solid", value: "solid" },
-    ],
-    itemToString: (item) => item.label,
-    itemToValue: (item) => item.value,
+  const filterFn = useFilter({ sensitivity: "base" });
+  const { collection, filter } = useListCollection({
+    initialItems: frameworkItems,
+    filter: filterFn().contains,
   });
 
   return (
-    <Root
-      {...(props.variantProps ?? {})}
-      collection={collection}
-      inputValue={props.inputValue ?? "Solid"}
-      width="64"
-    >
-      <Label>Framework</Label>
-      <Control>
-        <DemoInput />
-        <Trigger />
-      </Control>
-      <Positioner>
-        <Content>
-          <Item item={collection.items[0]}>
-            <ItemText>{collection.items[0].label}</ItemText>
-            <ItemIndicator />
-          </Item>
-          <Item item={collection.items[1]}>
-            <ItemText>{collection.items[1].label}</ItemText>
-            <ItemIndicator />
-          </Item>
-        </Content>
-      </Positioner>
-    </Root>
+    <HStack alignItems="start" gap="6" flexWrap="wrap" width="full" maxW="6xl">
+      <VStack as="section" alignItems="start" gap="2" minW="72" flex="1">
+        <Box as="h3" fontWeight="semibold">
+          Searchable
+        </Box>
+        <Box textStyle="xs" color="fg.muted">
+          Type to filter options, clear input, and select an item from results.
+        </Box>
+        <Root
+          {...(props.variantProps ?? {})}
+          collection={collection()}
+          onInputValueChange={(event) => filter(event.inputValue)}
+          style={{ width: "18rem" }}
+        >
+          <Label>Framework</Label>
+          <Control>
+            <Input placeholder="Type to search" />
+            <IndicatorGroup>
+              <ClearTrigger />
+              <Trigger />
+            </IndicatorGroup>
+          </Control>
+          <Portal>
+            <Positioner>
+              <Content>
+                <Empty>No items found</Empty>
+                <For each={collection().items}>
+                  {(item) => (
+                    <Item item={item}>
+                      <ItemText>{item.label}</ItemText>
+                      <ItemIndicator />
+                    </Item>
+                  )}
+                </For>
+              </Content>
+            </Positioner>
+          </Portal>
+        </Root>
+      </VStack>
+
+      <VStack as="section" alignItems="start" gap="2" minW="72" flex="1">
+        <Box as="h3" fontWeight="semibold">
+          Grouped Items
+        </Box>
+        <Box textStyle="xs" color="fg.muted">
+          Demonstrates grouped options with section labels.
+        </Box>
+        <Root
+          {...(props.variantProps ?? {})}
+          collection={collection()}
+          onInputValueChange={(event) => filter(event.inputValue)}
+          style={{ width: "18rem" }}
+        >
+          <Label>Framework</Label>
+          <Control>
+            <Input placeholder="Browse frameworks" />
+            <IndicatorGroup>
+              <ClearTrigger />
+              <Trigger />
+            </IndicatorGroup>
+          </Control>
+          <Portal>
+            <Positioner>
+              <Content>
+                <Empty>No items found</Empty>
+                <ItemGroup>
+                  <ItemGroupLabel>Popular</ItemGroupLabel>
+                  <For each={collection().items.slice(0, 4)}>
+                    {(item) => (
+                      <Item item={item}>
+                        <ItemText>{item.label}</ItemText>
+                        <ItemIndicator />
+                      </Item>
+                    )}
+                  </For>
+                </ItemGroup>
+                <ItemGroup>
+                  <ItemGroupLabel>Others</ItemGroupLabel>
+                  <For each={collection().items.slice(4)}>
+                    {(item) => (
+                      <Item item={item}>
+                        <ItemText>{item.label}</ItemText>
+                        <ItemIndicator />
+                      </Item>
+                    )}
+                  </For>
+                </ItemGroup>
+              </Content>
+            </Positioner>
+          </Portal>
+        </Root>
+      </VStack>
+    </HStack>
   );
 };
+
+const frameworkItems = [
+  { label: "React", value: "react" },
+  { label: "Solid", value: "solid" },
+  { label: "Vue", value: "vue" },
+  { label: "Angular", value: "angular" },
+  { label: "Svelte", value: "svelte" },
+  { label: "Preact", value: "preact" },
+  { label: "Qwik", value: "qwik" },
+  { label: "Lit", value: "lit" },
+  { label: "Alpine.js", value: "alpinejs" },
+  { label: "Ember", value: "ember" },
+  { label: "Next.js", value: "nextjs" },
+];

@@ -182,6 +182,7 @@ export const CompsExplorer = () => {
               <For each={visibleRecipes()}>
                 {(recipe) => {
                   const variantEntries = Object.entries(recipe.variantMap);
+                  const useVariantGrid = recipe.key !== "dialog";
                   const axes = variantEntries.map(([axis]) => axis);
                   const gridAxes = axes.filter(
                     (axis) => (recipe.variantMap[axis]?.length ?? 0) > 1,
@@ -194,6 +195,7 @@ export const CompsExplorer = () => {
                   );
 
                   const mode = createMemo<GridMode>(() => {
+                    if (!useVariantGrid) return "single";
                     const stored = modeByRecipe()[recipe.key];
                     if (stored === "single") return "single";
                     if (stored === "grid1d" && gridAxes.length > 0)
@@ -271,7 +273,7 @@ export const CompsExplorer = () => {
                           </Show>
                         </HStack>
 
-                        <Show when={variantEntries.length > 0}>
+                        <Show when={variantEntries.length > 0 && useVariantGrid}>
                           <VStack
                             alignItems="stretch"
                             gap="1.5"
@@ -599,9 +601,19 @@ export const CompsExplorer = () => {
                           </VStack>
                         </Show>
 
-                        <Show when={variantEntries.length === 0}>
+                        <Show when={variantEntries.length === 0 || !useVariantGrid}>
                           <Box textStyle="sm" color="fg.muted">
-                            No recipe variants. Showing static template.
+                            <Show
+                              when={useVariantGrid}
+                              fallback={
+                                <>
+                                  Variants are configured within the example
+                                  itself for this component.
+                                </>
+                              }
+                            >
+                              No recipe variants. Showing static template.
+                            </Show>
                           </Box>
                         </Show>
 
@@ -609,7 +621,7 @@ export const CompsExplorer = () => {
                           {renderCell(selectedCombo())}
                         </Show>
 
-                        <Show when={mode() === "grid1d" && axis1()}>
+                        <Show when={useVariantGrid && mode() === "grid1d" && axis1()}>
                           <Show
                             when={axisLayout() === "horizontal"}
                             fallback={
@@ -662,7 +674,14 @@ export const CompsExplorer = () => {
                           </Show>
                         </Show>
 
-                        <Show when={mode() === "grid2d" && axisX() && axisY()}>
+                        <Show
+                          when={
+                            useVariantGrid &&
+                            mode() === "grid2d" &&
+                            axisX() &&
+                            axisY()
+                          }
+                        >
                           <Box overflowX="auto">
                             <table
                               class={css({
