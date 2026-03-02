@@ -245,6 +245,49 @@ const parseThemeNumericValue = (
 const toColorGroupId = (palette: string) =>
   `color-group-${palette.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
 
+const ROLE_GROUP_ORDER = [
+  "solid",
+  "plain",
+  "outline",
+  "subtle",
+  "surface",
+  "ghost",
+  "accent",
+] as const;
+
+const getRoleGroupKey = (tokenKey: string) => tokenKey.split(".")[0] ?? "misc";
+
+const groupSemanticRoles = (roles: ParsedColorToken[]) => {
+  const grouped = new Map<string, ParsedColorToken[]>();
+
+  for (const role of roles) {
+    const roleGroup = getRoleGroupKey(role.key);
+    const bucket = grouped.get(roleGroup) ?? [];
+    bucket.push(role);
+    grouped.set(roleGroup, bucket);
+  }
+
+  return Array.from(grouped.entries())
+    .map(([name, items]) => ({
+      name,
+      items: items.sort((a, b) =>
+        a.key.localeCompare(b.key, undefined, { numeric: true }),
+      ),
+    }))
+    .sort((a, b) => {
+      const aIndex = ROLE_GROUP_ORDER.indexOf(
+        a.name as (typeof ROLE_GROUP_ORDER)[number],
+      );
+      const bIndex = ROLE_GROUP_ORDER.indexOf(
+        b.name as (typeof ROLE_GROUP_ORDER)[number],
+      );
+      if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex;
+      if (aIndex !== -1) return -1;
+      if (bIndex !== -1) return 1;
+      return a.name.localeCompare(b.name, undefined, { numeric: true });
+    });
+};
+
 export type DesignSystemSection =
   | "colors"
   | "layout"
@@ -752,7 +795,7 @@ export const DesignSystemOverview = (props: DesignSystemOverviewProps) => {
                     borderWidth="1px"
                     borderColor="border"
                     borderRadius="l2"
-                    p="3"
+                    p="2.5"
                   >
                     <HStack
                       justifyContent="space-between"
@@ -779,81 +822,103 @@ export const DesignSystemOverview = (props: DesignSystemOverviewProps) => {
                       </HStack>
                     </HStack>
 
-                    <Show when={group.shades.length > 0}>
-                      <VStack alignItems="stretch" gap="1">
-                        <Box textStyle="2xs" color="fg.muted">
-                          Scale
-                        </Box>
-                        <Box
-                          class={css({
-                            display: "grid",
-                            gridTemplateColumns:
-                              "repeat(auto-fill, minmax(78px, 1fr))",
-                            gap: "1.5",
-                          })}
-                        >
-                          <For each={group.shades}>
-                            {(item) => (
-                              <VStack alignItems="stretch" gap="1">
-                                <Box
-                                  h="12"
-                                  borderRadius="l1"
-                                  borderWidth="1px"
-                                  borderColor="border"
-                                  style={{
-                                    "background-color": `var(${item.cssVar})`,
-                                  }}
-                                />
-                                <Box
-                                  textStyle="2xs"
-                                  color="fg.muted"
-                                  textAlign="center"
-                                >
-                                  {item.key}
-                                </Box>
-                              </VStack>
-                            )}
-                          </For>
-                        </Box>
-                      </VStack>
-                    </Show>
+                    <Show
+                      when={group.shades.length > 0 || group.alphas.length > 0}
+                    >
+                      <VStack alignItems="stretch" gap="2">
+                        <Show when={group.shades.length > 0}>
+                          <VStack
+                            alignItems="stretch"
+                            gap="1"
+                            p="2"
+                            borderWidth="1px"
+                            borderColor="border"
+                            borderRadius="l1"
+                          >
+                            <Box textStyle="2xs" color="fg.muted">
+                              Scale
+                            </Box>
+                            <Box
+                              class={css({
+                                display: "grid",
+                                gridTemplateColumns:
+                                  "repeat(12, minmax(0, 1fr))",
+                                gap: "1",
+                              })}
+                            >
+                              <For each={group.shades}>
+                                {(item) => (
+                                  <VStack alignItems="stretch" gap="0.5">
+                                    <Box
+                                      h="9"
+                                      borderRadius="l1"
+                                      borderWidth="1px"
+                                      borderColor="border"
+                                      style={{
+                                        "background-color": `var(${item.cssVar})`,
+                                      }}
+                                    />
+                                    <Box
+                                      textStyle="2xs"
+                                      color="fg.muted"
+                                      textAlign="center"
+                                      fontFamily="mono"
+                                    >
+                                      {item.key}
+                                    </Box>
+                                  </VStack>
+                                )}
+                              </For>
+                            </Box>
+                          </VStack>
+                        </Show>
 
-                    <Show when={group.alphas.length > 0}>
-                      <VStack alignItems="stretch" gap="1">
-                        <Box textStyle="2xs" color="fg.muted">
-                          Alpha
-                        </Box>
-                        <Box
-                          class={css({
-                            display: "grid",
-                            gridTemplateColumns:
-                              "repeat(auto-fill, minmax(78px, 1fr))",
-                            gap: "1.5",
-                          })}
-                        >
-                          <For each={group.alphas}>
-                            {(item) => (
-                              <VStack alignItems="stretch" gap="1">
-                                <Box
-                                  h="10"
-                                  borderRadius="l1"
-                                  borderWidth="1px"
-                                  borderColor="border"
-                                  style={{
-                                    "background-color": `var(${item.cssVar})`,
-                                  }}
-                                />
-                                <Box
-                                  textStyle="2xs"
-                                  color="fg.muted"
-                                  textAlign="center"
-                                >
-                                  {item.key}
-                                </Box>
-                              </VStack>
-                            )}
-                          </For>
-                        </Box>
+                        <Show when={group.alphas.length > 0}>
+                          <VStack
+                            alignItems="stretch"
+                            gap="1"
+                            p="2"
+                            borderWidth="1px"
+                            borderColor="border"
+                            borderRadius="l1"
+                          >
+                            <Box textStyle="2xs" color="fg.muted">
+                              Alpha
+                            </Box>
+                            <Box
+                              class={css({
+                                display: "grid",
+                                gridTemplateColumns:
+                                  "repeat(12, minmax(0, 1fr))",
+                                gap: "1",
+                              })}
+                            >
+                              <For each={group.alphas}>
+                                {(item) => (
+                                  <VStack alignItems="stretch" gap="0.5">
+                                    <Box
+                                      h="9"
+                                      borderRadius="l1"
+                                      borderWidth="1px"
+                                      borderColor="border"
+                                      style={{
+                                        "background-color": `var(${item.cssVar})`,
+                                      }}
+                                    />
+                                    <Box
+                                      textStyle="2xs"
+                                      color="fg.muted"
+                                      textAlign="center"
+                                      fontFamily="mono"
+                                    >
+                                      {item.key}
+                                    </Box>
+                                  </VStack>
+                                )}
+                              </For>
+                            </Box>
+                          </VStack>
+                        </Show>
                       </VStack>
                     </Show>
 
@@ -862,40 +927,80 @@ export const DesignSystemOverview = (props: DesignSystemOverviewProps) => {
                         <Box textStyle="2xs" color="fg.muted">
                           Semantic / State
                         </Box>
-                        <Box
-                          class={css({
-                            display: "grid",
-                            gridTemplateColumns:
-                              "repeat(auto-fill, minmax(170px, 1fr))",
-                            gap: "1.5",
-                          })}
-                        >
-                          <For each={group.roles}>
-                            {(item) => (
-                              <VStack
-                                alignItems="stretch"
-                                gap="1"
-                                p="2"
-                                borderWidth="1px"
-                                borderColor="border"
-                                borderRadius="l1"
+                        <For each={groupSemanticRoles(group.roles)}>
+                          {(roleGroup) => (
+                            <VStack
+                              alignItems="stretch"
+                              gap="1"
+                              p="2"
+                              borderWidth="1px"
+                              borderColor="border"
+                              borderRadius="l1"
+                            >
+                              <HStack
+                                justifyContent="space-between"
+                                alignItems="center"
                               >
                                 <Box
-                                  h="8"
-                                  borderRadius="l1"
-                                  borderWidth="1px"
-                                  borderColor="border"
-                                  style={{
-                                    "background-color": `var(${item.cssVar})`,
-                                  }}
-                                />
-                                <Box textStyle="2xs" color="fg.muted">
-                                  {item.tokenPath}
+                                  textStyle="2xs"
+                                  color="fg.default"
+                                  fontWeight="semibold"
+                                  textTransform="capitalize"
+                                >
+                                  {roleGroup.name}
                                 </Box>
-                              </VStack>
-                            )}
-                          </For>
-                        </Box>
+                                <Box textStyle="2xs" color="fg.muted">
+                                  {roleGroup.items.length}
+                                </Box>
+                              </HStack>
+                              <Box
+                                class={css({
+                                  display: "grid",
+                                  gridTemplateColumns:
+                                    "repeat(auto-fill, minmax(160px, 1fr))",
+                                  gap: "1",
+                                })}
+                              >
+                                <For each={roleGroup.items}>
+                                  {(item) => (
+                                    <HStack
+                                      gap="1.5"
+                                      alignItems="center"
+                                      p="1.5"
+                                      borderWidth="1px"
+                                      borderColor="border"
+                                      borderRadius="l1"
+                                    >
+                                      <Box
+                                        w="8"
+                                        h="6"
+                                        borderRadius="l1"
+                                        borderWidth="1px"
+                                        borderColor="border"
+                                        flexShrink="0"
+                                        style={{
+                                          "background-color": `var(${item.cssVar})`,
+                                        }}
+                                      />
+                                      <Box
+                                        textStyle="2xs"
+                                        color="fg.muted"
+                                        fontFamily="mono"
+                                        minW="0"
+                                        flex="1"
+                                        whiteSpace="nowrap"
+                                        overflow="hidden"
+                                        textOverflow="ellipsis"
+                                      >
+                                        {item.key}
+                                      </Box>
+                                    </HStack>
+                                  )}
+                                </For>
+                              </Box>
+                            </VStack>
+                          )}
+                        </For>
                       </VStack>
                     </Show>
                   </VStack>
