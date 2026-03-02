@@ -2,6 +2,7 @@ import { A, useLocation } from "@solidjs/router";
 import { For, Show, createMemo, createSignal } from "solid-js";
 import { css } from "styled-system/css";
 import { Box, HStack, VStack } from "styled-system/jsx";
+import { ErrorOverlayPlayground } from "~/components/comps-explorer/ErrorOverlayPlayground";
 import { Button } from "~/components/ui/button";
 import { Code } from "~/components/ui/code";
 import { DEMO_COMPONENTS } from "~/components/ui/demos";
@@ -21,6 +22,8 @@ type RecipeMeta = {
   variantMap: Record<string, string[]>;
   defaultVariants: Record<string, string>;
 };
+
+const ERROR_OVERLAY_COMPONENT_KEY = "error-overlay";
 
 const friendlyName = (value: string) =>
   value
@@ -105,9 +108,15 @@ export const CompsExplorer = () => {
       .sort((a, b) => a.label.localeCompare(b.label)),
   );
 
-  const selectedRecipe = createMemo(() => {
+  const selectedComponent = createMemo(() => {
     const fromQuery = location.query.component;
     if (typeof fromQuery === "string") return fromQuery;
+    return recipeList()[0]?.key ?? ERROR_OVERLAY_COMPONENT_KEY;
+  });
+
+  const selectedRecipe = createMemo(() => {
+    const key = selectedComponent();
+    if (recipeList().some((recipe) => recipe.key === key)) return key;
     return recipeList()[0]?.key ?? "";
   });
 
@@ -153,13 +162,13 @@ export const CompsExplorer = () => {
                       borderRadius: "l1",
                       borderWidth: "1px",
                       borderColor:
-                        selectedRecipe() === recipe.key ? "blue.7" : "border",
+                        selectedComponent() === recipe.key ? "blue.7" : "border",
                       bg:
-                        selectedRecipe() === recipe.key
+                        selectedComponent() === recipe.key
                           ? "blue.subtle.bg"
                           : "transparent",
                       color:
-                        selectedRecipe() === recipe.key
+                        selectedComponent() === recipe.key
                           ? "blue.subtle.fg"
                           : "fg.default",
                       textStyle: "2xs",
@@ -172,6 +181,34 @@ export const CompsExplorer = () => {
                   </A>
                 )}
               </For>
+              <A
+                href={`/comps?component=${ERROR_OVERLAY_COMPONENT_KEY}`}
+                class={css({
+                  textDecoration: "none",
+                  px: "2",
+                  py: "0.75",
+                  borderRadius: "l1",
+                  borderWidth: "1px",
+                  borderColor:
+                    selectedComponent() === ERROR_OVERLAY_COMPONENT_KEY
+                      ? "red.7"
+                      : "border",
+                  bg:
+                    selectedComponent() === ERROR_OVERLAY_COMPONENT_KEY
+                      ? "red.subtle.bg"
+                      : "transparent",
+                  color:
+                    selectedComponent() === ERROR_OVERLAY_COMPONENT_KEY
+                      ? "red.subtle.fg"
+                      : "fg.default",
+                  textStyle: "2xs",
+                  fontWeight: "medium",
+                  lineHeight: "tight",
+                  whiteSpace: "nowrap",
+                })}
+              >
+                Error Overlay
+              </A>
             </HStack>
           </VStack>
         </Box>
@@ -179,113 +216,164 @@ export const CompsExplorer = () => {
         <Box as="main" flex="1" minW="0" p={{ base: "3", md: "4" }}>
           <Box pt={{ base: "2", md: "3" }}>
             <VStack alignItems="stretch" gap="5">
-              <For each={visibleRecipes()}>
-                {(recipe) => {
-                  const variantEntries = Object.entries(recipe.variantMap);
-                  const useVariantGrid = recipe.key !== "dialog";
-                  const axes = variantEntries.map(([axis]) => axis);
-                  const gridAxes = axes.filter(
-                    (axis) => (recipe.variantMap[axis]?.length ?? 0) > 1,
-                  );
-                  const selectedCombo = createMemo(() =>
-                    resolveCombo(
-                      recipe,
-                      selectedVariantsByRecipe()[recipe.key] ?? {},
-                    ),
-                  );
+              <Show
+                when={selectedComponent() === ERROR_OVERLAY_COMPONENT_KEY}
+                fallback={
+                  <For each={visibleRecipes()}>
+                    {(recipe) => {
+                      const variantEntries = Object.entries(recipe.variantMap);
+                      const useVariantGrid = recipe.key !== "dialog";
+                      const axes = variantEntries.map(([axis]) => axis);
+                      const gridAxes = axes.filter(
+                        (axis) => (recipe.variantMap[axis]?.length ?? 0) > 1,
+                      );
+                      const selectedCombo = createMemo(() =>
+                        resolveCombo(
+                          recipe,
+                          selectedVariantsByRecipe()[recipe.key] ?? {},
+                        ),
+                      );
 
-                  const mode = createMemo<GridMode>(() => {
-                    if (!useVariantGrid) return "single";
-                    const stored = modeByRecipe()[recipe.key];
-                    if (stored === "single") return "single";
-                    if (stored === "grid1d" && gridAxes.length > 0)
-                      return "grid1d";
-                    if (stored === "grid2d" && gridAxes.length > 1)
-                      return "grid2d";
-                    if (gridAxes.length > 1) return "grid2d";
-                    if (gridAxes.length > 0) return "grid1d";
-                    return "single";
-                  });
+                      const mode = createMemo<GridMode>(() => {
+                        if (!useVariantGrid) return "single";
+                        const stored = modeByRecipe()[recipe.key];
+                        if (stored === "single") return "single";
+                        if (stored === "grid1d" && gridAxes.length > 0)
+                          return "grid1d";
+                        if (stored === "grid2d" && gridAxes.length > 1)
+                          return "grid2d";
+                        if (gridAxes.length > 1) return "grid2d";
+                        if (gridAxes.length > 0) return "grid1d";
+                        return "single";
+                      });
 
-                  const axisSelection = createMemo(
-                    () => axesByRecipe()[recipe.key] ?? {},
-                  );
-                  const axisLayout = createMemo<AxisLayout>(
-                    () => axisLayoutByRecipe()[recipe.key] ?? "horizontal",
-                  );
+                      const axisSelection = createMemo(
+                        () => axesByRecipe()[recipe.key] ?? {},
+                      );
+                      const axisLayout = createMemo<AxisLayout>(
+                        () => axisLayoutByRecipe()[recipe.key] ?? "horizontal",
+                      );
 
-                  const axis1 = createMemo(() => {
-                    const selected = axisSelection().one;
-                    if (selected && gridAxes.includes(selected))
-                      return selected;
-                    return gridAxes[0] ?? "";
-                  });
+                      const axis1 = createMemo(() => {
+                        const selected = axisSelection().one;
+                        if (selected && gridAxes.includes(selected))
+                          return selected;
+                        return gridAxes[0] ?? "";
+                      });
 
-                  const axisX = createMemo(() => {
-                    const selected = axisSelection().x;
-                    if (selected && gridAxes.includes(selected))
-                      return selected;
-                    return gridAxes[0] ?? "";
-                  });
+                      const axisX = createMemo(() => {
+                        const selected = axisSelection().x;
+                        if (selected && gridAxes.includes(selected))
+                          return selected;
+                        return gridAxes[0] ?? "";
+                      });
 
-                  const axisY = createMemo(() => {
-                    const selected = axisSelection().y;
-                    if (
-                      selected &&
-                      gridAxes.includes(selected) &&
-                      selected !== axisX()
-                    )
-                      return selected;
-                    const fallback = gridAxes.find((axis) => axis !== axisX());
-                    return fallback ?? axisX();
-                  });
+                      const axisY = createMemo(() => {
+                        const selected = axisSelection().y;
+                        if (
+                          selected &&
+                          gridAxes.includes(selected) &&
+                          selected !== axisX()
+                        )
+                          return selected;
+                        const fallback = gridAxes.find((axis) => axis !== axisX());
+                        return fallback ?? axisX();
+                      });
 
-                  const renderCell = (combo: Combo) => (
-                    <Box
-                      p="2"
-                      display="inline-flex"
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      <Box width="fit-content">
-                        {renderRecipeDemo(recipe.key, combo)}
-                      </Box>
-                    </Box>
-                  );
-
-                  return (
-                    <Box id={`recipe-${recipe.key}`}>
-                      <VStack alignItems="stretch" gap="4">
-                        <HStack
-                          justifyContent="space-between"
+                      const renderCell = (combo: Combo) => (
+                        <Box
+                          p="2"
+                          display="inline-flex"
                           alignItems="center"
+                          justifyContent="center"
                         >
-                          <Box
-                            textStyle={{ base: "xl", md: "2xl" }}
-                            fontWeight="semibold"
-                          >
-                            {recipe.label}
+                          <Box width="fit-content">
+                            {renderRecipeDemo(recipe.key, combo)}
                           </Box>
-                          <Show when={recipe.key === "toast"}>
-                            <Box textStyle="xs" color="fg.muted">
-                              Click button to verify toast behavior.
-                            </Box>
-                          </Show>
-                        </HStack>
+                        </Box>
+                      );
 
-                        <Show when={variantEntries.length > 0 && useVariantGrid}>
-                          <VStack
-                            alignItems="stretch"
-                            gap="1.5"
-                            borderWidth="1px"
-                            borderColor="border"
-                            borderRadius="l2"
-                            p="2.5"
-                            bg="bg.subtle"
-                          >
-                            <HStack alignItems="start" gap="2" flexWrap="wrap">
-                              <For each={variantEntries}>
-                                {([axis, options]) => (
+                      return (
+                        <Box id={`recipe-${recipe.key}`}>
+                          <VStack alignItems="stretch" gap="4">
+                            <HStack
+                              justifyContent="space-between"
+                              alignItems="center"
+                            >
+                              <Box
+                                textStyle={{ base: "xl", md: "2xl" }}
+                                fontWeight="semibold"
+                              >
+                                {recipe.label}
+                              </Box>
+                              <Show when={recipe.key === "toast"}>
+                                <Box textStyle="xs" color="fg.muted">
+                                  Click button to verify toast behavior.
+                                </Box>
+                              </Show>
+                            </HStack>
+
+                            <Show when={variantEntries.length > 0 && useVariantGrid}>
+                              <VStack
+                                alignItems="stretch"
+                                gap="1.5"
+                                borderWidth="1px"
+                                borderColor="border"
+                                borderRadius="l2"
+                                p="2.5"
+                                bg="bg.subtle"
+                              >
+                                <HStack alignItems="start" gap="2" flexWrap="wrap">
+                                  <For each={variantEntries}>
+                                    {([axis, options]) => (
+                                      <HStack
+                                        alignItems="center"
+                                        gap="1.5"
+                                        p="1.5"
+                                        borderWidth="1px"
+                                        borderColor="border"
+                                        borderRadius="l2"
+                                        bg="bg.default"
+                                        flexWrap="wrap"
+                                      >
+                                        <Box
+                                          textStyle="xs"
+                                          color="fg.muted"
+                                          whiteSpace="nowrap"
+                                        >
+                                          {axis}
+                                        </Box>
+                                        <HStack gap="1" flexWrap="wrap">
+                                          <For each={options}>
+                                            {(option) => (
+                                              <Button
+                                                size="xs"
+                                                variant={
+                                                  selectedCombo()[axis] === option
+                                                    ? "solid"
+                                                    : "outline"
+                                                }
+                                                onClick={() =>
+                                                  setSelectedVariantsByRecipe(
+                                                    (prev) => ({
+                                                      ...prev,
+                                                      [recipe.key]: {
+                                                        ...(prev[recipe.key] ?? {}),
+                                                        [axis]: option,
+                                                      },
+                                                    }),
+                                                  )
+                                                }
+                                              >
+                                                {option}
+                                              </Button>
+                                            )}
+                                          </For>
+                                        </HStack>
+                                      </HStack>
+                                    )}
+                                  </For>
+
                                   <HStack
                                     alignItems="center"
                                     gap="1.5"
@@ -301,433 +389,347 @@ export const CompsExplorer = () => {
                                       color="fg.muted"
                                       whiteSpace="nowrap"
                                     >
-                                      {axis}
+                                      mode
                                     </Box>
                                     <HStack gap="1" flexWrap="wrap">
-                                      <For each={options}>
-                                        {(option) => (
-                                          <Button
-                                            size="xs"
-                                            variant={
-                                              selectedCombo()[axis] === option
-                                                ? "solid"
-                                                : "outline"
-                                            }
-                                            onClick={() =>
-                                              setSelectedVariantsByRecipe(
-                                                (prev) => ({
+                                      <Button
+                                        size="xs"
+                                        variant={
+                                          mode() === "single" ? "solid" : "outline"
+                                        }
+                                        onClick={() =>
+                                          setModeByRecipe((prev) => ({
+                                            ...prev,
+                                            [recipe.key]: "single",
+                                          }))
+                                        }
+                                      >
+                                        Single
+                                      </Button>
+                                      <Button
+                                        size="xs"
+                                        variant={
+                                          mode() === "grid1d" ? "solid" : "outline"
+                                        }
+                                        disabled={gridAxes.length === 0}
+                                        onClick={() =>
+                                          setModeByRecipe((prev) => ({
+                                            ...prev,
+                                            [recipe.key]: "grid1d",
+                                          }))
+                                        }
+                                      >
+                                        1D
+                                      </Button>
+                                      <Button
+                                        size="xs"
+                                        variant={
+                                          mode() === "grid2d" ? "solid" : "outline"
+                                        }
+                                        disabled={gridAxes.length < 2}
+                                        onClick={() =>
+                                          setModeByRecipe((prev) => ({
+                                            ...prev,
+                                            [recipe.key]: "grid2d",
+                                          }))
+                                        }
+                                      >
+                                        2D
+                                      </Button>
+                                    </HStack>
+                                  </HStack>
+
+                                  <Show
+                                    when={
+                                      mode() === "grid1d" && gridAxes.length > 0
+                                    }
+                                  >
+                                    <HStack
+                                      alignItems="center"
+                                      gap="1.5"
+                                      p="1.5"
+                                      borderWidth="1px"
+                                      borderColor="border"
+                                      borderRadius="l2"
+                                      bg="bg.default"
+                                      flexWrap="wrap"
+                                    >
+                                      <Box
+                                        textStyle="xs"
+                                        color="fg.muted"
+                                        whiteSpace="nowrap"
+                                      >
+                                        1d axis
+                                      </Box>
+                                      <HStack gap="1" flexWrap="wrap">
+                                        <For each={gridAxes}>
+                                          {(axis) => (
+                                            <Button
+                                              size="xs"
+                                              variant={
+                                                axis1() === axis
+                                                  ? "solid"
+                                                  : "outline"
+                                              }
+                                              onClick={() =>
+                                                setAxesByRecipe((prev) => ({
                                                   ...prev,
                                                   [recipe.key]: {
                                                     ...(prev[recipe.key] ?? {}),
-                                                    [axis]: option,
+                                                    one: axis,
                                                   },
-                                                }),
-                                              )
-                                            }
-                                          >
-                                            {option}
-                                          </Button>
-                                        )}
-                                      </For>
+                                                }))
+                                              }
+                                            >
+                                              {axis}
+                                            </Button>
+                                          )}
+                                        </For>
+                                      </HStack>
                                     </HStack>
-                                  </HStack>
-                                )}
-                              </For>
-
-                              <HStack
-                                alignItems="center"
-                                gap="1.5"
-                                p="1.5"
-                                borderWidth="1px"
-                                borderColor="border"
-                                borderRadius="l2"
-                                bg="bg.default"
-                                flexWrap="wrap"
-                              >
-                                <Box
-                                  textStyle="xs"
-                                  color="fg.muted"
-                                  whiteSpace="nowrap"
-                                >
-                                  mode
-                                </Box>
-                                <HStack gap="1" flexWrap="wrap">
-                                  <Button
-                                    size="xs"
-                                    variant={
-                                      mode() === "single" ? "solid" : "outline"
-                                    }
-                                    onClick={() =>
-                                      setModeByRecipe((prev) => ({
-                                        ...prev,
-                                        [recipe.key]: "single",
-                                      }))
-                                    }
-                                  >
-                                    Single
-                                  </Button>
-                                  <Button
-                                    size="xs"
-                                    variant={
-                                      mode() === "grid1d" ? "solid" : "outline"
-                                    }
-                                    disabled={gridAxes.length === 0}
-                                    onClick={() =>
-                                      setModeByRecipe((prev) => ({
-                                        ...prev,
-                                        [recipe.key]: "grid1d",
-                                      }))
-                                    }
-                                  >
-                                    1D
-                                  </Button>
-                                  <Button
-                                    size="xs"
-                                    variant={
-                                      mode() === "grid2d" ? "solid" : "outline"
-                                    }
-                                    disabled={gridAxes.length < 2}
-                                    onClick={() =>
-                                      setModeByRecipe((prev) => ({
-                                        ...prev,
-                                        [recipe.key]: "grid2d",
-                                      }))
-                                    }
-                                  >
-                                    2D
-                                  </Button>
-                                </HStack>
-                              </HStack>
-
-                              <Show
-                                when={
-                                  mode() === "grid1d" && gridAxes.length > 0
-                                }
-                              >
-                                <HStack
-                                  alignItems="center"
-                                  gap="1.5"
-                                  p="1.5"
-                                  borderWidth="1px"
-                                  borderColor="border"
-                                  borderRadius="l2"
-                                  bg="bg.default"
-                                  flexWrap="wrap"
-                                >
-                                  <Box
-                                    textStyle="xs"
-                                    color="fg.muted"
-                                    whiteSpace="nowrap"
-                                  >
-                                    1d axis
-                                  </Box>
-                                  <HStack gap="1" flexWrap="wrap">
-                                    <For each={gridAxes}>
-                                      {(axis) => (
+                                    <HStack
+                                      alignItems="center"
+                                      gap="1.5"
+                                      p="1.5"
+                                      borderWidth="1px"
+                                      borderColor="border"
+                                      borderRadius="l2"
+                                      bg="bg.default"
+                                      flexWrap="wrap"
+                                    >
+                                      <Box
+                                        textStyle="xs"
+                                        color="fg.muted"
+                                        whiteSpace="nowrap"
+                                      >
+                                        1d layout
+                                      </Box>
+                                      <HStack gap="1" flexWrap="wrap">
                                         <Button
                                           size="xs"
                                           variant={
-                                            axis1() === axis
+                                            axisLayout() === "horizontal"
                                               ? "solid"
                                               : "outline"
                                           }
                                           onClick={() =>
-                                            setAxesByRecipe((prev) => ({
+                                            setAxisLayoutByRecipe((prev) => ({
                                               ...prev,
-                                              [recipe.key]: {
-                                                ...(prev[recipe.key] ?? {}),
-                                                one: axis,
-                                              },
+                                              [recipe.key]: "horizontal",
                                             }))
                                           }
                                         >
-                                          {axis}
+                                          Horizontal
                                         </Button>
-                                      )}
-                                    </For>
-                                  </HStack>
-                                </HStack>
-                                <HStack
-                                  alignItems="center"
-                                  gap="1.5"
-                                  p="1.5"
-                                  borderWidth="1px"
-                                  borderColor="border"
-                                  borderRadius="l2"
-                                  bg="bg.default"
-                                  flexWrap="wrap"
-                                >
-                                  <Box
-                                    textStyle="xs"
-                                    color="fg.muted"
-                                    whiteSpace="nowrap"
-                                  >
-                                    1d layout
-                                  </Box>
-                                  <HStack gap="1" flexWrap="wrap">
-                                    <Button
-                                      size="xs"
-                                      variant={
-                                        axisLayout() === "horizontal"
-                                          ? "solid"
-                                          : "outline"
-                                      }
-                                      onClick={() =>
-                                        setAxisLayoutByRecipe((prev) => ({
-                                          ...prev,
-                                          [recipe.key]: "horizontal",
-                                        }))
-                                      }
-                                    >
-                                      Horizontal
-                                    </Button>
-                                    <Button
-                                      size="xs"
-                                      variant={
-                                        axisLayout() === "vertical"
-                                          ? "solid"
-                                          : "outline"
-                                      }
-                                      onClick={() =>
-                                        setAxisLayoutByRecipe((prev) => ({
-                                          ...prev,
-                                          [recipe.key]: "vertical",
-                                        }))
-                                      }
-                                    >
-                                      Vertical
-                                    </Button>
-                                  </HStack>
-                                </HStack>
-                              </Show>
+                                        <Button
+                                          size="xs"
+                                          variant={
+                                            axisLayout() === "vertical"
+                                              ? "solid"
+                                              : "outline"
+                                          }
+                                          onClick={() =>
+                                            setAxisLayoutByRecipe((prev) => ({
+                                              ...prev,
+                                              [recipe.key]: "vertical",
+                                            }))
+                                          }
+                                        >
+                                          Vertical
+                                        </Button>
+                                      </HStack>
+                                    </HStack>
+                                  </Show>
 
+                                  <Show
+                                    when={
+                                      mode() === "grid2d" && gridAxes.length > 1
+                                    }
+                                  >
+                                    <HStack
+                                      alignItems="center"
+                                      gap="1.5"
+                                      p="1.5"
+                                      borderWidth="1px"
+                                      borderColor="border"
+                                      borderRadius="l2"
+                                      bg="bg.default"
+                                      flexWrap="wrap"
+                                    >
+                                      <Box
+                                        textStyle="xs"
+                                        color="fg.muted"
+                                        whiteSpace="nowrap"
+                                      >
+                                        2d axes
+                                      </Box>
+                                      <HStack
+                                        gap="1"
+                                        alignItems="center"
+                                        flexWrap="wrap"
+                                      >
+                                        <Box textStyle="xs" color="fg.muted">
+                                          x
+                                        </Box>
+                                        <HStack gap="1" flexWrap="wrap">
+                                          <For each={gridAxes}>
+                                            {(axis) => (
+                                              <Button
+                                                size="xs"
+                                                variant={
+                                                  axisX() === axis
+                                                    ? "solid"
+                                                    : "outline"
+                                                }
+                                                onClick={() =>
+                                                  setAxesByRecipe((prev) => ({
+                                                    ...prev,
+                                                    [recipe.key]: {
+                                                      ...(prev[recipe.key] ?? {}),
+                                                      x: axis,
+                                                    },
+                                                  }))
+                                                }
+                                              >
+                                                {axis}
+                                              </Button>
+                                            )}
+                                          </For>
+                                        </HStack>
+                                      </HStack>
+                                      <HStack
+                                        gap="1"
+                                        alignItems="center"
+                                        flexWrap="wrap"
+                                      >
+                                        <Box textStyle="xs" color="fg.muted">
+                                          y
+                                        </Box>
+                                        <HStack gap="1" flexWrap="wrap">
+                                          <For
+                                            each={gridAxes.filter(
+                                              (axis) => axis !== axisX(),
+                                            )}
+                                          >
+                                            {(axis) => (
+                                              <Button
+                                                size="xs"
+                                                variant={
+                                                  axisY() === axis
+                                                    ? "solid"
+                                                    : "outline"
+                                                }
+                                                onClick={() =>
+                                                  setAxesByRecipe((prev) => ({
+                                                    ...prev,
+                                                    [recipe.key]: {
+                                                      ...(prev[recipe.key] ?? {}),
+                                                      y: axis,
+                                                    },
+                                                  }))
+                                                }
+                                              >
+                                                {axis}
+                                              </Button>
+                                            )}
+                                          </For>
+                                        </HStack>
+                                      </HStack>
+                                    </HStack>
+                                  </Show>
+                                </HStack>
+                              </VStack>
+                            </Show>
+
+                            <Show when={variantEntries.length === 0 || !useVariantGrid}>
+                              <Box textStyle="sm" color="fg.muted">
+                                <Show
+                                  when={useVariantGrid}
+                                  fallback={
+                                    <>
+                                      Variants are configured within the example
+                                      itself for this component.
+                                    </>
+                                  }
+                                >
+                                  No recipe variants. Showing static template.
+                                </Show>
+                              </Box>
+                            </Show>
+
+                            <Show when={mode() === "single"}>
+                              {renderCell(selectedCombo())}
+                            </Show>
+
+                            <Show when={useVariantGrid && mode() === "grid1d" && axis1()}>
                               <Show
-                                when={
-                                  mode() === "grid2d" && gridAxes.length > 1
+                                when={axisLayout() === "horizontal"}
+                                fallback={
+                                  <VStack alignItems="stretch" gap="3">
+                                    <For each={recipe.variantMap[axis1()] ?? []}>
+                                      {(option) => {
+                                        const combo = {
+                                          ...selectedCombo(),
+                                          [axis1()]: option,
+                                        };
+
+                                        return (
+                                          <VStack alignItems="stretch" gap="1.5">
+                                            <Box textStyle="xs" color="fg.muted">
+                                              {axis1()}: {option}
+                                            </Box>
+                                            {renderCell(combo)}
+                                          </VStack>
+                                        );
+                                      }}
+                                    </For>
+                                  </VStack>
                                 }
                               >
-                                <HStack
-                                  alignItems="center"
-                                  gap="1.5"
-                                  p="1.5"
-                                  borderWidth="1px"
-                                  borderColor="border"
-                                  borderRadius="l2"
-                                  bg="bg.default"
-                                  flexWrap="wrap"
-                                >
-                                  <Box
-                                    textStyle="xs"
-                                    color="fg.muted"
-                                    whiteSpace="nowrap"
-                                  >
-                                    2d axes
-                                  </Box>
+                                <Box overflowX="auto">
                                   <HStack
-                                    gap="1"
-                                    alignItems="center"
-                                    flexWrap="wrap"
+                                    alignItems="stretch"
+                                    gap="2.5"
+                                    flexWrap="nowrap"
                                   >
-                                    <Box textStyle="xs" color="fg.muted">
-                                      x
-                                    </Box>
-                                    <HStack gap="1" flexWrap="wrap">
-                                      <For each={gridAxes}>
-                                        {(axis) => (
-                                          <Button
-                                            size="xs"
-                                            variant={
-                                              axisX() === axis
-                                                ? "solid"
-                                                : "outline"
-                                            }
-                                            onClick={() =>
-                                              setAxesByRecipe((prev) => ({
-                                                ...prev,
-                                                [recipe.key]: {
-                                                  ...(prev[recipe.key] ?? {}),
-                                                  x: axis,
-                                                },
-                                              }))
-                                            }
-                                          >
-                                            {axis}
-                                          </Button>
-                                        )}
-                                      </For>
-                                    </HStack>
-                                  </HStack>
-                                  <HStack
-                                    gap="1"
-                                    alignItems="center"
-                                    flexWrap="wrap"
-                                  >
-                                    <Box textStyle="xs" color="fg.muted">
-                                      y
-                                    </Box>
-                                    <HStack gap="1" flexWrap="wrap">
-                                      <For
-                                        each={gridAxes.filter(
-                                          (axis) => axis !== axisX(),
-                                        )}
-                                      >
-                                        {(axis) => (
-                                          <Button
-                                            size="xs"
-                                            variant={
-                                              axisY() === axis
-                                                ? "solid"
-                                                : "outline"
-                                            }
-                                            onClick={() =>
-                                              setAxesByRecipe((prev) => ({
-                                                ...prev,
-                                                [recipe.key]: {
-                                                  ...(prev[recipe.key] ?? {}),
-                                                  y: axis,
-                                                },
-                                              }))
-                                            }
-                                          >
-                                            {axis}
-                                          </Button>
-                                        )}
-                                      </For>
-                                    </HStack>
-                                  </HStack>
-                                </HStack>
-                              </Show>
-                            </HStack>
-                          </VStack>
-                        </Show>
+                                    <For each={recipe.variantMap[axis1()] ?? []}>
+                                      {(option) => {
+                                        const combo = {
+                                          ...selectedCombo(),
+                                          [axis1()]: option,
+                                        };
 
-                        <Show when={variantEntries.length === 0 || !useVariantGrid}>
-                          <Box textStyle="sm" color="fg.muted">
+                                        return (
+                                          <VStack alignItems="stretch" gap="1.5">
+                                            <Box textStyle="xs" color="fg.muted">
+                                              {axis1()}: {option}
+                                            </Box>
+                                            {renderCell(combo)}
+                                          </VStack>
+                                        );
+                                      }}
+                                    </For>
+                                  </HStack>
+                                </Box>
+                              </Show>
+                            </Show>
+
                             <Show
-                              when={useVariantGrid}
-                              fallback={
-                                <>
-                                  Variants are configured within the example
-                                  itself for this component.
-                                </>
+                              when={
+                                useVariantGrid &&
+                                mode() === "grid2d" &&
+                                axisX() &&
+                                axisY()
                               }
                             >
-                              No recipe variants. Showing static template.
-                            </Show>
-                          </Box>
-                        </Show>
-
-                        <Show when={mode() === "single"}>
-                          {renderCell(selectedCombo())}
-                        </Show>
-
-                        <Show when={useVariantGrid && mode() === "grid1d" && axis1()}>
-                          <Show
-                            when={axisLayout() === "horizontal"}
-                            fallback={
-                              <VStack alignItems="stretch" gap="3">
-                                <For each={recipe.variantMap[axis1()] ?? []}>
-                                  {(option) => {
-                                    const combo = {
-                                      ...selectedCombo(),
-                                      [axis1()]: option,
-                                    };
-
-                                    return (
-                                      <VStack alignItems="stretch" gap="1.5">
-                                        <Box textStyle="xs" color="fg.muted">
-                                          {axis1()}: {option}
-                                        </Box>
-                                        {renderCell(combo)}
-                                      </VStack>
-                                    );
-                                  }}
-                                </For>
-                              </VStack>
-                            }
-                          >
-                            <Box overflowX="auto">
-                              <HStack
-                                alignItems="stretch"
-                                gap="2.5"
-                                flexWrap="nowrap"
-                              >
-                                <For each={recipe.variantMap[axis1()] ?? []}>
-                                  {(option) => {
-                                    const combo = {
-                                      ...selectedCombo(),
-                                      [axis1()]: option,
-                                    };
-
-                                    return (
-                                      <VStack alignItems="stretch" gap="1.5">
-                                        <Box textStyle="xs" color="fg.muted">
-                                          {axis1()}: {option}
-                                        </Box>
-                                        {renderCell(combo)}
-                                      </VStack>
-                                    );
-                                  }}
-                                </For>
-                              </HStack>
-                            </Box>
-                          </Show>
-                        </Show>
-
-                        <Show
-                          when={
-                            useVariantGrid &&
-                            mode() === "grid2d" &&
-                            axisX() &&
-                            axisY()
-                          }
-                        >
-                          <Box overflowX="auto">
-                            <table
-                              class={css({
-                                width: "fit-content",
-                                borderCollapse: "collapse",
-                              })}
-                            >
-                              <thead>
-                                <tr>
-                                  <th
-                                    class={css({
-                                      p: "1",
-                                      borderBottomWidth: "1px",
-                                      borderColor: "border",
-                                      textAlign: "left",
-                                      textStyle: "xs",
-                                      color: "fg.muted",
-                                      fontWeight: "medium",
-                                      whiteSpace: "nowrap",
-                                    })}
-                                  >
-                                    {axisY()} \ {axisX()}
-                                  </th>
-                                  <For each={recipe.variantMap[axisX()] ?? []}>
-                                    {(xOption) => (
-                                      <th
-                                        class={css({
-                                          p: "1",
-                                          borderBottomWidth: "1px",
-                                          borderColor: "border",
-                                          textAlign: "left",
-                                          textStyle: "xs",
-                                          fontWeight: "medium",
-                                          color: "fg.muted",
-                                          whiteSpace: "nowrap",
-                                        })}
-                                      >
-                                        {xOption}
-                                      </th>
-                                    )}
-                                  </For>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                <For each={recipe.variantMap[axisY()] ?? []}>
-                                  {(yOption) => (
+                              <Box overflowX="auto">
+                                <table
+                                  class={css({
+                                    width: "fit-content",
+                                    borderCollapse: "collapse",
+                                  })}
+                                >
+                                  <thead>
                                     <tr>
                                       <th
                                         class={css({
@@ -736,50 +738,92 @@ export const CompsExplorer = () => {
                                           borderColor: "border",
                                           textAlign: "left",
                                           textStyle: "xs",
-                                          fontWeight: "medium",
                                           color: "fg.muted",
-                                          verticalAlign: "top",
+                                          fontWeight: "medium",
                                           whiteSpace: "nowrap",
                                         })}
                                       >
-                                        {yOption}
+                                        {axisY()} \ {axisX()}
                                       </th>
-                                      <For
-                                        each={recipe.variantMap[axisX()] ?? []}
-                                      >
-                                        {(xOption) => {
-                                          const combo = {
-                                            ...selectedCombo(),
-                                            [axisY()]: yOption,
-                                            [axisX()]: xOption,
-                                          };
-
-                                          return (
-                                            <td
-                                              class={css({
-                                                p: "0.5 0.75rem",
-                                                borderBottomWidth: "1px",
-                                                borderColor: "border",
-                                                verticalAlign: "top",
-                                              })}
-                                            >
-                                              {renderCell(combo)}
-                                            </td>
-                                          );
-                                        }}
+                                      <For each={recipe.variantMap[axisX()] ?? []}>
+                                        {(xOption) => (
+                                          <th
+                                            class={css({
+                                              p: "1",
+                                              borderBottomWidth: "1px",
+                                              borderColor: "border",
+                                              textAlign: "left",
+                                              textStyle: "xs",
+                                              fontWeight: "medium",
+                                              color: "fg.muted",
+                                              whiteSpace: "nowrap",
+                                            })}
+                                          >
+                                            {xOption}
+                                          </th>
+                                        )}
                                       </For>
                                     </tr>
-                                  )}
-                                </For>
-                              </tbody>
-                            </table>
-                          </Box>
-                        </Show>
-                      </VStack>
-                    </Box>
-                  );
-                }}
-              </For>
+                                  </thead>
+                                  <tbody>
+                                    <For each={recipe.variantMap[axisY()] ?? []}>
+                                      {(yOption) => (
+                                        <tr>
+                                          <th
+                                            class={css({
+                                              p: "1",
+                                              borderBottomWidth: "1px",
+                                              borderColor: "border",
+                                              textAlign: "left",
+                                              textStyle: "xs",
+                                              fontWeight: "medium",
+                                              color: "fg.muted",
+                                              verticalAlign: "top",
+                                              whiteSpace: "nowrap",
+                                            })}
+                                          >
+                                            {yOption}
+                                          </th>
+                                          <For
+                                            each={recipe.variantMap[axisX()] ?? []}
+                                          >
+                                            {(xOption) => {
+                                              const combo = {
+                                                ...selectedCombo(),
+                                                [axisY()]: yOption,
+                                                [axisX()]: xOption,
+                                              };
+
+                                              return (
+                                                <td
+                                                  class={css({
+                                                    p: "0.5 0.75rem",
+                                                    borderBottomWidth: "1px",
+                                                    borderColor: "border",
+                                                    verticalAlign: "top",
+                                                  })}
+                                                >
+                                                  {renderCell(combo)}
+                                                </td>
+                                              );
+                                            }}
+                                          </For>
+                                        </tr>
+                                      )}
+                                    </For>
+                                  </tbody>
+                                </table>
+                              </Box>
+                            </Show>
+                          </VStack>
+                        </Box>
+                      );
+                    }}
+                  </For>
+                }
+              >
+                <ErrorOverlayPlayground />
+              </Show>
             </VStack>
           </Box>
         </Box>
