@@ -82,3 +82,99 @@ Use these when the task matches the skill intent. Open each skill's `SKILL.md` b
 
 - Root `.mcp.json` includes Ark UI MCP server wiring for component-aware assistance.
 - `app/vitest.config.ts` provides baseline testing config and `~` alias resolution.
+
+## Component System Registry (Source Of Truth)
+
+- Component registry lives in `app/src/components/ui/demos.tsx`.
+- `DEMO_COMPONENTS` is rendered through `Dynamic`; when adding/removing component reference usages, update this registry first.
+- Keep component keys stable (`camelCase`) so `/comps/:component` links remain valid.
+
+## Component System Composition Patterns
+
+- Action controls:
+  - Prefer `Button`, `IconButton`, `ClearButton`, `CloseButton` wrappers.
+- Form controls:
+  - Prefer explicit `Label` + `Control` composition (`Field`, `Input`, `Textarea`, `Select`, `Combobox`).
+- Overlay controls:
+  - Compose as `Root -> Trigger/Anchor -> Positioner -> Content`; use portal only when needed.
+- Dialog-like controls:
+  - Compose as `Root -> Backdrop -> Positioner -> Content -> Header/Body/Footer`.
+- Collection/list controls:
+  - Use framework collection helpers (for example `createListCollection`) instead of ad-hoc filtering logic.
+- SSR-sensitive controls:
+  - Keep first render tree stable. Avoid portal-first defaults for wrappers used on SSR routes unless required.
+
+## Available Components (Detailed List)
+
+Each component file under `app/src/components/ui/*` also includes a colocated reference usage export (for example `*Demo`) that can be reused and registered in `DEMO_COMPONENTS`.
+
+- `AbsoluteCenter` (`./absolute-center`): Centers one child in a bounded parent.
+- `Accordion` (`./accordion`): Composes `Root -> Item -> ItemTrigger -> ItemContent`.
+- `Alert` (`./alert`): Composes status block with title/description/actions.
+- `Avatar` (`./avatar`): Composes image/fallback slots.
+- `Badge` (`./badge`): Uses recipe variants for status tags.
+- `Breadcrumb` (`./breadcrumb`): Composes `Root -> List -> Item -> Link/Current`.
+- `Button` (`./button`): Primary/secondary action wrapper.
+- `Card` (`./card`): Composes optional header/body/footer sections.
+- `Carousel` (`./carousel`): Composes track/content/items/controls.
+- `Checkbox` (`./checkbox`): Labeled binary form control composition.
+- `Clipboard` (`./clipboard`): Trigger + copied-state feedback composition.
+- `CloseButton` (`./close-button`): Standard dismiss icon action wrapper.
+- `Code` (`./code`): Inline/block code presentation recipe.
+- `Collapsible` (`./collapsible`): Composes `Root -> Trigger -> Content`.
+- `ColorPicker` (`./color-picker`): Trigger/panel/format controls.
+- `Combobox` (`./combobox`): Composes `Root -> Label -> Control -> Input -> Positioner -> Content -> Item`.
+- `DatePicker` (`./date-picker`): Field trigger + calendar panel.
+- `Dialog` (`./dialog`): Full dialog shell composition.
+- `Drawer` (`./drawer`): Side panel dialog variant.
+- `DisplayValue` (`./display-value`): Formatted value + empty fallback output.
+- `Editable` (`./editable`): Inline preview/input editing flow.
+- `Field` (`./field`): Label/helper/error wrapper around controls.
+- `Fieldset` (`./fieldset`): Groups related form controls semantically.
+- `FileUpload` (`./file-upload`): Drop/trigger/list upload composition.
+- `Group` (`./group`): Aligned action/input grouping wrapper.
+- `Heading` (`./heading`): Semantic heading recipe wrapper.
+- `HoverCard` (`./hover-card`): Hover/focus preview panel composition.
+- `Icon` (`./icon`): Tokenized icon sizing/color wrapper.
+- `IconButton` (`./icon-button`): Icon-only action button wrapper.
+- `Input` (`./input`): Base text entry control.
+- `InputAddon` (`./input-addon`): Leading/trailing static adornments.
+- `InputGroup` (`./input-group`): Input + addons/buttons grouped as one control.
+- `Kbd` (`./kbd`): Keyboard shortcut token renderer.
+- `Link` (`./link`): Styled navigation/action link recipe.
+- `Menu` (`./menu`): Trigger/positioner/content/item composition.
+- `NumberInput` (`./number-input`): Numeric control + stepper triggers.
+- `Pagination` (`./pagination`): Previous/next/item navigation composition.
+- `PinInput` (`./pin-input`): Segmented one-time-code input.
+- `Popover` (`./popover`): `Root -> Trigger/Anchor -> Positioner -> Content` composition.
+- `Progress` (`./progress`): Track/range/value composition.
+- `RadioCardGroup` (`./radio-card-group`): Rich-choice single-select cards.
+- `RadioGroup` (`./radio-group`): Labeled single-select radio composition.
+- `RatingGroup` (`./rating-group`): Icon rating control with labels.
+- `ScrollArea` (`./scroll-area`): Viewport + scrollbar/thumb composition.
+- `SegmentGroup` (`./segment-group`): Mutually exclusive segmented controls.
+- `Select` (`./select`): `Root -> Label -> Trigger -> Positioner -> Content -> Item`.
+- `Skeleton` (`./skeleton`): Loading placeholder recipe.
+- `Slider` (`./slider`): Track/range/thumb/marks composition.
+- `SimpleDialog` (`./simple-dialog`): High-level dialog wrapper.
+- `SimplePopover` (`./simple-popover`): High-level popover wrapper.
+- `SimpleSelect` (`./simple-select`): High-level select wrapper.
+- `Spinner` (`./spinner`): Indeterminate loading indicator.
+- `Splitter` (`./splitter`): Resizable pane composition.
+- `Switch` (`./switch`): Binary toggle composition with label/support text patterns.
+- `Table` (`./table`): Semantic table slot composition.
+- `Tabs` (`./tabs`): `Root -> List -> Trigger -> Content` composition.
+- `TagsInput` (`./tags-input`): Tokenized multi-value input.
+- `Text` (`./text`): Body/caption/muted text recipe wrapper.
+- `Textarea` (`./textarea`): Multi-line text entry control.
+- `Toast` (`./toast`): Toaster + toast/action/close composition.
+- `ToggleGroup` (`./toggle-group`): Grouped toggle selection control.
+- `Tooltip` (`./tooltip`): Trigger + content help text composition.
+
+## Component System Update Checklist
+
+- Add/update component file under `app/src/components/ui/`.
+- Register the component reference usage in `DEMO_COMPONENTS` (`app/src/components/ui/demos.tsx`).
+- Ensure composition uses shared wrappers and tokenized Panda styles.
+- Verify SSR-first render stability for overlays/select-like components.
+- Run `pnpm -C app type-check`.
