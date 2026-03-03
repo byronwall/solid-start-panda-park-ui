@@ -17,6 +17,7 @@ import {
 type CompsExplorerSidebarProps = {
   recipeList: RecipeMeta[];
   simpleComponentLinks: ExplorerComponentLink[];
+  docsOnlyComponentLinks: ExplorerComponentLink[];
   selectedComponent: string;
 };
 
@@ -136,6 +137,16 @@ export const CompsExplorerSidebar = (props: CompsExplorerSidebarProps) => {
                   class={navLinkClass(props.selectedComponent === recipe.key)}
                 >
                   {recipe.label}
+                </A>
+              )}
+            </For>
+            <For each={props.docsOnlyComponentLinks}>
+              {(component) => (
+                <A
+                  href={`/comps/${component.key}`}
+                  class={navLinkClass(props.selectedComponent === component.key)}
+                >
+                  {component.label}
                 </A>
               )}
             </For>

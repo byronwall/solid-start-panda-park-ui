@@ -18,3 +18,11 @@ export const CloseButton = (props: CloseButtonProps) => {
     </IconButton>
   );
 };
+
+export interface CloseButtonDemoProps {
+  variantProps?: Record<string, string>;
+}
+
+export const CloseButtonDemo = (props: CloseButtonDemoProps) => {
+  return <CloseButton {...(props.variantProps ?? {})} />;
+};

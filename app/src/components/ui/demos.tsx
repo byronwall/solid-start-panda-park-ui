@@ -9,11 +9,13 @@ import { CardDemo } from "./card";
 import { CarouselDemo } from "./carousel";
 import { CheckboxDemo } from "./checkbox";
 import { ClipboardDemo } from "./clipboard";
+import { CloseButtonDemo } from "./close-button";
 import { CodeDemo } from "./code";
 import { CollapsibleDemo } from "./collapsible";
 import { ComboboxDemo } from "./combobox";
 import { ColorPickerDemo } from "./color-picker";
 import { DatePickerDemo } from "./date-picker";
+import { DisplayValueDemo } from "./display-value";
 import { DialogDemo } from "./dialog";
 import { DrawerDemo } from "./drawer";
 import { EditableDemo } from "./editable";
@@ -24,6 +26,7 @@ import { GroupDemo } from "./group";
 import { HeadingDemo } from "./heading";
 import { HoverCardDemo } from "./hover-card";
 import { IconDemo } from "./icon";
+import { IconButtonDemo } from "./icon-button";
 import { InputAddonDemo } from "./input-addon";
 import { InputDemo } from "./input";
 import { InputGroupDemo } from "./input-group";
@@ -79,11 +82,13 @@ export const DEMO_COMPONENTS: Partial<
   carousel: CarouselDemo,
   checkbox: CheckboxDemo,
   clipboard: ClipboardDemo,
+  closeButton: CloseButtonDemo,
   code: CodeDemo,
   collapsible: CollapsibleDemo,
   colorPicker: ColorPickerDemo,
   combobox: ComboboxDemo,
   datePicker: DatePickerDemo,
+  displayValue: DisplayValueDemo,
   dialog: DialogDemo,
   drawer: DrawerDemo,
   editable: EditableDemo,
@@ -94,6 +99,7 @@ export const DEMO_COMPONENTS: Partial<
   heading: HeadingDemo,
   hoverCard: HoverCardDemo,
   icon: IconDemo,
+  iconButton: IconButtonDemo,
   inputAddon: InputAddonDemo,
   input: InputDemo,
   inputGroup: InputGroupDemo,
@@ -118,6 +124,7 @@ export const DEMO_COMPONENTS: Partial<
   simpleSelect: SimpleSelectDemo,
   spinner: SpinnerDemo,
   splitter: SplitterDemo,
+  switch: SwitchRecipeDemo,
   switchRecipe: SwitchRecipeDemo,
   table: TableDemo,
   tabs: TabsDemo,

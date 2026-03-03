@@ -13,6 +13,7 @@ import {
   DESIGN_SYSTEM_LAYOUT_KEY,
   DESIGN_SYSTEM_MOTION_KEY,
   DESIGN_SYSTEM_TYPOGRAPHY_KEY,
+  DOCS_ONLY_COMPONENT_LINKS,
   ERROR_OVERLAY_COMPONENT_KEY,
   SIMPLE_COMPONENT_LINKS,
   friendlyName,
@@ -53,9 +54,12 @@ const getDesignSystemSection = (
 const recipeList: RecipeMeta[] = Object.entries(recipes)
   .map(([key, recipe]) => {
     const typedRecipe = recipe as RecipeLike;
+    const normalizedKey = key === "switchRecipe" ? "switch" : key;
+    const label = friendlyName(normalizedKey);
+
     return {
-      key,
-      label: friendlyName(key),
+      key: normalizedKey,
+      label,
       variantMap: getVariantMap(typedRecipe),
       defaultVariants: typedRecipe.defaultVariants ?? {},
     };
@@ -65,9 +69,13 @@ const recipeList: RecipeMeta[] = Object.entries(recipes)
 const defaultSelectedComponent = DESIGN_SYSTEM_LAYOUT_KEY;
 
 const resolveSelectedComponent = (selectedComponent: string) => {
+  if (selectedComponent === "switchRecipe") return "switch";
   if (isDesignSystemKey(selectedComponent)) return selectedComponent;
   if (selectedComponent === ERROR_OVERLAY_COMPONENT_KEY) return selectedComponent;
   if (SIMPLE_COMPONENT_LINKS.some((item) => item.key === selectedComponent)) {
+    return selectedComponent;
+  }
+  if (DOCS_ONLY_COMPONENT_LINKS.some((item) => item.key === selectedComponent)) {
     return selectedComponent;
   }
   if (recipeList.some((recipe) => recipe.key === selectedComponent)) {
@@ -85,9 +93,16 @@ export const CompsExplorer = (props: CompsExplorerProps) => {
       (component) => component.key === selectedComponent(),
     ),
   );
+  const selectedDocsOnlyComponent = createMemo(() =>
+    DOCS_ONLY_COMPONENT_LINKS.find(
+      (component) => component.key === selectedComponent(),
+    ),
+  );
   const selectedRecipe = createMemo(
     () => {
       const simpleComponent = selectedSimpleComponent();
+      const docsOnlyComponent = selectedDocsOnlyComponent();
+
       return (
         recipeList.find((recipe) => recipe.key === selectedComponent()) ??
         (simpleComponent
@@ -97,7 +112,14 @@ export const CompsExplorer = (props: CompsExplorerProps) => {
               variantMap: {},
               defaultVariants: {},
             }
-          : null)
+          : docsOnlyComponent
+            ? {
+                key: docsOnlyComponent.key,
+                label: docsOnlyComponent.label,
+                variantMap: {},
+                defaultVariants: {},
+              }
+            : null)
       );
     },
   );
@@ -108,6 +130,7 @@ export const CompsExplorer = (props: CompsExplorerProps) => {
         <CompsExplorerSidebar
           recipeList={recipeList}
           simpleComponentLinks={SIMPLE_COMPONENT_LINKS}
+          docsOnlyComponentLinks={DOCS_ONLY_COMPONENT_LINKS}
           selectedComponent={selectedComponent()}
         />
 
