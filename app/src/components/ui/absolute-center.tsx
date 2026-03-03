@@ -16,8 +16,7 @@ export const AbsoluteCenterDemo = (props: AbsoluteCenterDemoProps) => {
   return (
     <DemoBox
       position="relative"
-      width="full"
-      maxW="72"
+      width="72"
       height="20"
       borderWidth="1px"
       borderColor="border"

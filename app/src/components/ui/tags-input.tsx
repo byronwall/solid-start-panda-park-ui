@@ -3,7 +3,6 @@ import { XIcon } from "lucide-solid";
 import { type ComponentProps, For } from "solid-js";
 import { createStyleContext } from "styled-system/jsx";
 import { tagsInput } from "styled-system/recipes";
-import { Input as DemoInput } from "./input";
 
 const { withProvider, withContext } = createStyleContext(tagsInput);
 
@@ -72,7 +71,7 @@ export const TagsInputDemo = (props: TagsInputDemoProps) => {
       <Label>Tags</Label>
       <Control>
         <Items />
-        <DemoInput />
+        <Input placeholder="Add tag..." />
       </Control>
     </Root>
   );

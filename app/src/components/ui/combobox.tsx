@@ -7,8 +7,6 @@ import { For, Show } from "solid-js";
 import { Portal } from "solid-js/web";
 import {
   Box,
-  HStack,
-  VStack,
   createStyleContext,
   type HTMLStyledProps,
 } from "styled-system/jsx";
@@ -80,33 +78,27 @@ export const ComboboxDemo = (props: ComboboxDemoProps) => {
   });
 
   return (
-    <HStack alignItems="start" gap="6" flexWrap="wrap" width="full" maxW="6xl">
-      <VStack as="section" alignItems="start" gap="2" minW="72" flex="1">
-        <Box as="h3" fontWeight="semibold">
-          Searchable
-        </Box>
-        <Box textStyle="xs" color="fg.muted">
-          Type to filter options, clear input, and select an item from results.
-        </Box>
-        <Root
-          {...(props.variantProps ?? {})}
-          collection={collection()}
-          onInputValueChange={(event) => filter(event.inputValue)}
-          style={{ width: "18rem" }}
-        >
-          <Label>Framework</Label>
-          <Control>
-            <Input placeholder="Type to search" />
-            <IndicatorGroup>
-              <ClearTrigger />
-              <Trigger />
-            </IndicatorGroup>
-          </Control>
-          <Portal>
-            <Positioner>
-              <Content>
-                <Empty>No items found</Empty>
-                <For each={collection().items}>
+    <Box width="64">
+      <Root
+        {...(props.variantProps ?? {})}
+        collection={collection()}
+        onInputValueChange={(event) => filter(event.inputValue)}
+      >
+        <Label>Framework</Label>
+        <Control>
+          <Input placeholder="Search frameworks" />
+          <IndicatorGroup>
+            <ClearTrigger />
+            <Trigger />
+          </IndicatorGroup>
+        </Control>
+        <Portal>
+          <Positioner>
+            <Content>
+              <Empty>No items found</Empty>
+              <ItemGroup>
+                <ItemGroupLabel>Popular</ItemGroupLabel>
+                <For each={collection().items.slice(0, 4)}>
                   {(item) => (
                     <Item item={item}>
                       <ItemText>{item.label}</ItemText>
@@ -114,65 +106,23 @@ export const ComboboxDemo = (props: ComboboxDemoProps) => {
                     </Item>
                   )}
                 </For>
-              </Content>
-            </Positioner>
-          </Portal>
-        </Root>
-      </VStack>
-
-      <VStack as="section" alignItems="start" gap="2" minW="72" flex="1">
-        <Box as="h3" fontWeight="semibold">
-          Grouped Items
-        </Box>
-        <Box textStyle="xs" color="fg.muted">
-          Demonstrates grouped options with section labels.
-        </Box>
-        <Root
-          {...(props.variantProps ?? {})}
-          collection={collection()}
-          onInputValueChange={(event) => filter(event.inputValue)}
-          style={{ width: "18rem" }}
-        >
-          <Label>Framework</Label>
-          <Control>
-            <Input placeholder="Browse frameworks" />
-            <IndicatorGroup>
-              <ClearTrigger />
-              <Trigger />
-            </IndicatorGroup>
-          </Control>
-          <Portal>
-            <Positioner>
-              <Content>
-                <Empty>No items found</Empty>
-                <ItemGroup>
-                  <ItemGroupLabel>Popular</ItemGroupLabel>
-                  <For each={collection().items.slice(0, 4)}>
-                    {(item) => (
-                      <Item item={item}>
-                        <ItemText>{item.label}</ItemText>
-                        <ItemIndicator />
-                      </Item>
-                    )}
-                  </For>
-                </ItemGroup>
-                <ItemGroup>
-                  <ItemGroupLabel>Others</ItemGroupLabel>
-                  <For each={collection().items.slice(4)}>
-                    {(item) => (
-                      <Item item={item}>
-                        <ItemText>{item.label}</ItemText>
-                        <ItemIndicator />
-                      </Item>
-                    )}
-                  </For>
-                </ItemGroup>
-              </Content>
-            </Positioner>
-          </Portal>
-        </Root>
-      </VStack>
-    </HStack>
+              </ItemGroup>
+              <ItemGroup>
+                <ItemGroupLabel>Others</ItemGroupLabel>
+                <For each={collection().items.slice(4)}>
+                  {(item) => (
+                    <Item item={item}>
+                      <ItemText>{item.label}</ItemText>
+                      <ItemIndicator />
+                    </Item>
+                  )}
+                </For>
+              </ItemGroup>
+            </Content>
+          </Positioner>
+        </Portal>
+      </Root>
+    </Box>
   );
 };
 

@@ -40,6 +40,7 @@ export const button = defineRecipe({
         color: "colorPalette.solid.fg",
         _hover: {
           bg: "colorPalette.solid.bg.hover",
+          filter: "brightness(1.08)",
         },
       },
       surface: {
@@ -48,6 +49,7 @@ export const button = defineRecipe({
         borderColor: "colorPalette.surface.border",
         color: "colorPalette.surface.fg",
         _hover: {
+          bg: "colorPalette.surface.bg.active",
           borderColor: "colorPalette.surface.border.hover",
         },
         _active: {

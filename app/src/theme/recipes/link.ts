@@ -15,7 +15,10 @@ export const link = defineRecipe({
     textDecorationThickness: "0.1em",
     textUnderlineOffset: "0.125em",
     transitionDuration: "normal",
-    transitionProperty: "text-decoration-color",
+    transitionProperty: "text-decoration-color, background-color",
+    _hover: {
+      bg: "gray.subtle.bg",
+    },
     _icon: {
       boxSize: "1em",
     },

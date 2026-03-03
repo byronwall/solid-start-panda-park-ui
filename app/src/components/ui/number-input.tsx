@@ -3,7 +3,6 @@ import { ChevronDownIcon, ChevronUpIcon } from "lucide-solid";
 import type { ComponentProps } from "solid-js";
 import { createStyleContext } from "styled-system/jsx";
 import { numberInput } from "styled-system/recipes";
-import { Input as DemoInput } from "./input";
 import { Box as DemoBox, VStack as DemoVStack } from "styled-system/jsx";
 
 const { withProvider, withContext } = createStyleContext(numberInput);
@@ -58,7 +57,7 @@ export const NumberInputDemo = (props: NumberInputDemoProps) => {
         value={props.value ?? "42"}
         width="64"
       >
-        <DemoInput />
+        <Input />
         <Control />
       </Root>
     </DemoVStack>

@@ -45,7 +45,9 @@ export const RecipeExplorerPanel = (props: RecipeExplorerPanelProps) => {
   const variantEntries = createMemo(() =>
     Object.entries(props.recipe.variantMap),
   );
-  const useVariantGrid = createMemo(() => props.recipe.key !== "dialog");
+  const useVariantGrid = createMemo(
+    () => !["dialog", "drawer", "select", "table"].includes(props.recipe.key),
+  );
   const axes = createMemo(() => variantEntries().map(([axis]) => axis));
   const gridAxes = createMemo(() =>
     axes().filter((axis) => (props.recipe.variantMap[axis]?.length ?? 0) > 1),

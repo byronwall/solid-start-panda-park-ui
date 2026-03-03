@@ -1,7 +1,7 @@
 import { ark } from "@ark-ui/solid/factory";
 import { Fieldset } from "@ark-ui/solid/fieldset";
 import type { ComponentProps } from "solid-js";
-import { createStyleContext } from "styled-system/jsx";
+import { Box, VStack, createStyleContext } from "styled-system/jsx";
 import { fieldset } from "styled-system/recipes";
 import * as DemoCheckbox from "./checkbox";
 
@@ -22,19 +22,53 @@ export interface FieldsetDemoProps {
   variantProps?: Record<string, string>;
 }
 
+const Option = (props: { label: string; checked?: boolean; disabled?: boolean }) => (
+  <DemoCheckbox.Root defaultChecked={props.checked} disabled={props.disabled}>
+    <DemoCheckbox.HiddenInput />
+    <DemoCheckbox.Control>
+      <DemoCheckbox.Indicator />
+    </DemoCheckbox.Control>
+    <DemoCheckbox.Label>{props.label}</DemoCheckbox.Label>
+  </DemoCheckbox.Root>
+);
+
 export const FieldsetDemo = (props: FieldsetDemoProps) => {
   return (
-    <Root {...(props.variantProps ?? {})} width="72">
-      <Legend>Notifications</Legend>
-      <Content>
-        <DemoCheckbox.Root checked>
-          <DemoCheckbox.HiddenInput />
-          <DemoCheckbox.Control>
-            <DemoCheckbox.Indicator />
-          </DemoCheckbox.Control>
-          <DemoCheckbox.Label>Email alerts</DemoCheckbox.Label>
-        </DemoCheckbox.Root>
-      </Content>
-    </Root>
+    <VStack alignItems="stretch" gap="5" width="full" maxW="3xl">
+      <Root {...(props.variantProps ?? {})}>
+        <Control>
+          <Legend>Notifications</Legend>
+          <HelperText>Choose where to receive updates.</HelperText>
+        </Control>
+        <Content>
+          <Option label="Email alerts" checked />
+          <Option label="SMS alerts" />
+          <Option label="Weekly summary" checked />
+        </Content>
+      </Root>
+
+      <Root {...(props.variantProps ?? {})} invalid>
+        <Control>
+          <Legend>Contact Preference</Legend>
+          <HelperText>Select at least one channel.</HelperText>
+          <ErrorText>Choose one notification channel.</ErrorText>
+        </Control>
+        <Content>
+          <Option label="Product announcements" />
+          <Option label="Security updates" />
+        </Content>
+      </Root>
+
+      <Root {...(props.variantProps ?? {})} disabled>
+        <Control>
+          <Legend>Managed Settings</Legend>
+          <HelperText>These options are locked by policy.</HelperText>
+        </Control>
+        <Content>
+          <Option label="Audit log export" checked disabled />
+          <Option label="Retention alerts" disabled />
+        </Content>
+      </Root>
+    </VStack>
   );
 };

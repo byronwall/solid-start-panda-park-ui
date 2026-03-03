@@ -1,8 +1,8 @@
 import { Field } from "@ark-ui/solid/field";
 import type { ComponentProps } from "solid-js";
-import { createStyleContext } from "styled-system/jsx";
+import { Box, VStack, createStyleContext } from "styled-system/jsx";
 import { field } from "styled-system/recipes";
-import { Input as DemoInput } from "./input";
+import { Input } from "./input";
 
 const { withProvider, withContext } = createStyleContext(field);
 
@@ -25,10 +25,33 @@ export interface FieldDemoProps {
 
 export const FieldDemo = (props: FieldDemoProps) => {
   return (
-    <Root {...(props.variantProps ?? {})} width="64">
-      <Label>Field Label</Label>
-      <DemoInput placeholder="Field input" />
-      <HelperText>Helper text</HelperText>
-    </Root>
+    <VStack alignItems="stretch" gap="4" width="72">
+      <Root {...(props.variantProps ?? {})}>
+        <Label>Display Name</Label>
+        <Input placeholder="Enter display name" />
+        <HelperText>Shown on your public profile.</HelperText>
+      </Root>
+
+      <Root {...(props.variantProps ?? {})} required>
+        <Label>
+          Email
+          <RequiredIndicator />
+        </Label>
+        <Input type="email" placeholder="name@company.com" />
+        <HelperText>Used for account notifications.</HelperText>
+      </Root>
+
+      <Root {...(props.variantProps ?? {})} invalid>
+        <Label>Username</Label>
+        <Input value="admin" />
+        <ErrorText>This username is unavailable.</ErrorText>
+      </Root>
+
+      <Root {...(props.variantProps ?? {})} disabled>
+        <Label>Workspace</Label>
+        <Input value="Panda Park" />
+        <HelperText>Managed by your organization admin.</HelperText>
+      </Root>
+    </VStack>
   );
 };

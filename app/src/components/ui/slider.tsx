@@ -6,7 +6,9 @@ import { slider } from "styled-system/recipes";
 
 const { withProvider, withContext } = createStyleContext(slider);
 
-export const Root = withProvider(Slider.Root, "root");
+export const Root = withProvider(Slider.Root, "root", {
+  forwardProps: ["orientation"],
+});
 export const Control = withContext(Slider.Control, "control");
 export const DraggingIndicator = withContext(
   Slider.DraggingIndicator,
@@ -75,13 +77,16 @@ export interface SliderDemoProps {
 }
 
 export const SliderDemo = (props: SliderDemoProps) => {
+  const isVertical = props.variantProps?.orientation === "vertical";
+
   return (
     <Root
       {...(props.variantProps ?? {})}
       defaultValue={[30]}
       min={0}
       max={100}
-      width="72"
+      width={isVertical ? "16" : "72"}
+      height={isVertical ? "40" : undefined}
     >
       <Label>Volume</Label>
       <Control>

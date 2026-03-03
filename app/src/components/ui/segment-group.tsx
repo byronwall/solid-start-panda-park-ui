@@ -66,7 +66,8 @@ export interface SegmentGroupDemoProps {
 
 export const SegmentGroupDemo = (props: SegmentGroupDemoProps) => {
   return (
-    <Root {...(props.variantProps ?? {})} value="list">
+    <Root {...(props.variantProps ?? {})} defaultValue="List">
+      <Indicator />
       <Items items={["Board", "List", "Table"]} />
     </Root>
   );

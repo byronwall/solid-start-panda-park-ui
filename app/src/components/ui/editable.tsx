@@ -2,7 +2,6 @@ import { Editable } from "@ark-ui/solid/editable";
 import type { ComponentProps } from "solid-js";
 import { createStyleContext } from "styled-system/jsx";
 import { editable } from "styled-system/recipes";
-import { Input as DemoInput } from "./input";
 
 const { withProvider, withContext } = createStyleContext(editable);
 
@@ -33,9 +32,8 @@ export interface EditableDemoProps {
 export const EditableDemo = (props: EditableDemoProps) => {
   return (
     <Root {...(props.variantProps ?? {})} defaultValue="Rename me" width="64">
-      <Label>Editable</Label>
       <Area>
-        <DemoInput />
+        <Input />
         <Preview />
       </Area>
     </Root>

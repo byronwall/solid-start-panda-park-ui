@@ -50,9 +50,9 @@ export interface SkeletonDemoProps {
 
 export const SkeletonDemo = (props: SkeletonDemoProps) => {
   return (
-    <DemoVStack alignItems="stretch" gap="3" width="full" maxW="64">
+    <DemoVStack alignItems="stretch" gap="3" width="64">
       <SkeletonCircle {...(props.variantProps ?? {})} size="10" />
-      <Skeleton {...(props.variantProps ?? {})} height="4" />
+      <Skeleton {...(props.variantProps ?? {})} height="4" width="full" />
     </DemoVStack>
   );
 };
