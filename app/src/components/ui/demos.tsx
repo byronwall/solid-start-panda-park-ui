@@ -43,6 +43,9 @@ import { SegmentGroupDemo } from "./segment-group";
 import { SelectDemo } from "./select";
 import { SkeletonDemo } from "./skeleton";
 import { SliderDemo } from "./slider";
+import { SimpleDialogDemo } from "./simple-dialog";
+import { SimplePopoverDemo } from "./simple-popover";
+import { SimpleSelectDemo } from "./simple-select";
 import { SpinnerDemo } from "./spinner";
 import { SplitterDemo } from "./splitter";
 import { SwitchRecipeDemo } from "./switch";
@@ -116,6 +119,11 @@ export const DEMO_COMPONENTS: Record<
   select: (props) => <SelectDemo variantProps={props.variantProps} />,
   skeleton: (props) => <SkeletonDemo variantProps={props.variantProps} />,
   slider: (props) => <SliderDemo variantProps={props.variantProps} />,
+  simpleDialog: (props) => <SimpleDialogDemo variantProps={props.variantProps} />,
+  simplePopover: (props) => (
+    <SimplePopoverDemo variantProps={props.variantProps} />
+  ),
+  simpleSelect: (props) => <SimpleSelectDemo variantProps={props.variantProps} />,
   spinner: (props) => <SpinnerDemo variantProps={props.variantProps} />,
   splitter: (props) => <SplitterDemo variantProps={props.variantProps} />,
   switchRecipe: (props) => (

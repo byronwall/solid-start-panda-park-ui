@@ -21,6 +21,20 @@ export const DESIGN_SYSTEM_LAYOUT_KEY = "design-system-layout";
 export const DESIGN_SYSTEM_TYPOGRAPHY_KEY = "design-system-typography";
 export const DESIGN_SYSTEM_MOTION_KEY = "design-system-motion";
 export const DESIGN_SYSTEM_EFFECTS_KEY = "design-system-effects";
+export const SIMPLE_DIALOG_COMPONENT_KEY = "simpleDialog";
+export const SIMPLE_POPOVER_COMPONENT_KEY = "simplePopover";
+export const SIMPLE_SELECT_COMPONENT_KEY = "simpleSelect";
+
+export type ExplorerComponentLink = {
+  key: string;
+  label: string;
+};
+
+export const SIMPLE_COMPONENT_LINKS: ExplorerComponentLink[] = [
+  { key: SIMPLE_DIALOG_COMPONENT_KEY, label: "Simple Dialog" },
+  { key: SIMPLE_POPOVER_COMPONENT_KEY, label: "Simple Popover" },
+  { key: SIMPLE_SELECT_COMPONENT_KEY, label: "Simple Select" },
+];
 
 export const friendlyName = (value: string) =>
   value

@@ -1,9 +1,9 @@
-import { For, Show, createMemo } from "solid-js";
+import { For, Show, createMemo, createSignal } from "solid-js";
 import { css } from "styled-system/css";
 import { Box, HStack, VStack } from "styled-system/jsx";
+import { Button } from "~/components/ui/button";
 import { Code } from "~/components/ui/code";
 import { DEMO_COMPONENTS } from "~/components/ui/demos";
-import { Button } from "~/components/ui/button";
 import {
   resolveCombo,
   type AxisLayout,
@@ -15,16 +15,6 @@ import {
 
 type RecipeExplorerPanelProps = {
   recipe: RecipeMeta;
-  selectedVariants: Combo;
-  modeByRecipe: GridMode | undefined;
-  axisLayoutByRecipe: AxisLayout | undefined;
-  axisSelectionByRecipe: AxisSelection | undefined;
-  onSelectVariant: (axis: string, option: string) => void;
-  onSetMode: (mode: GridMode) => void;
-  onSetAxisOne: (axis: string) => void;
-  onSetAxisX: (axis: string) => void;
-  onSetAxisY: (axis: string) => void;
-  onSetAxisLayout: (layout: AxisLayout) => void;
 };
 
 const renderRecipeDemo = (recipeKey: string, variantProps: Combo) => {
@@ -42,6 +32,11 @@ const renderRecipeDemo = (recipeKey: string, variantProps: Combo) => {
 };
 
 export const RecipeExplorerPanel = (props: RecipeExplorerPanelProps) => {
+  const [selectedVariants, setSelectedVariants] = createSignal<Combo>({});
+  const [mode, setMode] = createSignal<GridMode>("grid2d");
+  const [axisLayout, setAxisLayout] = createSignal<AxisLayout>("horizontal");
+  const [axisSelection, setAxisSelection] = createSignal<AxisSelection>({});
+
   const variantEntries = createMemo(() =>
     Object.entries(props.recipe.variantMap),
   );
@@ -54,12 +49,12 @@ export const RecipeExplorerPanel = (props: RecipeExplorerPanelProps) => {
   );
 
   const selectedCombo = createMemo(() =>
-    resolveCombo(props.recipe, props.selectedVariants),
+    resolveCombo(props.recipe, selectedVariants()),
   );
 
-  const mode = createMemo<GridMode>(() => {
+  const resolvedMode = createMemo<GridMode>(() => {
     if (!useVariantGrid()) return "single";
-    const stored = props.modeByRecipe;
+    const stored = mode();
     if (stored === "single") return "single";
     if (stored === "grid1d" && gridAxes().length > 0) return "grid1d";
     if (stored === "grid2d" && gridAxes().length > 1) return "grid2d";
@@ -67,11 +62,6 @@ export const RecipeExplorerPanel = (props: RecipeExplorerPanelProps) => {
     if (gridAxes().length > 0) return "grid1d";
     return "single";
   });
-
-  const axisSelection = createMemo(() => props.axisSelectionByRecipe ?? {});
-  const axisLayout = createMemo<AxisLayout>(
-    () => props.axisLayoutByRecipe ?? "horizontal",
-  );
 
   const axis1 = createMemo(() => {
     const selected = axisSelection().one;
@@ -156,7 +146,12 @@ export const RecipeExplorerPanel = (props: RecipeExplorerPanelProps) => {
                                 ? "solid"
                                 : "outline"
                             }
-                            onClick={() => props.onSelectVariant(axis, option)}
+                            onClick={() =>
+                              setSelectedVariants((prev) => ({
+                                ...prev,
+                                [axis]: option,
+                              }))
+                            }
                           >
                             {option}
                           </Button>
@@ -183,31 +178,31 @@ export const RecipeExplorerPanel = (props: RecipeExplorerPanelProps) => {
                 <HStack gap="1" flexWrap="wrap">
                   <Button
                     size="xs"
-                    variant={mode() === "single" ? "solid" : "outline"}
-                    onClick={() => props.onSetMode("single")}
+                    variant={resolvedMode() === "single" ? "solid" : "outline"}
+                    onClick={() => setMode("single")}
                   >
                     Single
                   </Button>
                   <Button
                     size="xs"
-                    variant={mode() === "grid1d" ? "solid" : "outline"}
+                    variant={resolvedMode() === "grid1d" ? "solid" : "outline"}
                     disabled={gridAxes().length === 0}
-                    onClick={() => props.onSetMode("grid1d")}
+                    onClick={() => setMode("grid1d")}
                   >
                     1D
                   </Button>
                   <Button
                     size="xs"
-                    variant={mode() === "grid2d" ? "solid" : "outline"}
+                    variant={resolvedMode() === "grid2d" ? "solid" : "outline"}
                     disabled={gridAxes().length < 2}
-                    onClick={() => props.onSetMode("grid2d")}
+                    onClick={() => setMode("grid2d")}
                   >
                     2D
                   </Button>
                 </HStack>
               </HStack>
 
-              <Show when={mode() === "grid1d" && gridAxes().length > 0}>
+              <Show when={resolvedMode() === "grid1d" && gridAxes().length > 0}>
                 <HStack
                   alignItems="center"
                   gap="1.5"
@@ -227,7 +222,9 @@ export const RecipeExplorerPanel = (props: RecipeExplorerPanelProps) => {
                         <Button
                           size="xs"
                           variant={axis1() === axis ? "solid" : "outline"}
-                          onClick={() => props.onSetAxisOne(axis)}
+                          onClick={() =>
+                            setAxisSelection((prev) => ({ ...prev, one: axis }))
+                          }
                         >
                           {axis}
                         </Button>
@@ -254,16 +251,14 @@ export const RecipeExplorerPanel = (props: RecipeExplorerPanelProps) => {
                       variant={
                         axisLayout() === "horizontal" ? "solid" : "outline"
                       }
-                      onClick={() => props.onSetAxisLayout("horizontal")}
+                      onClick={() => setAxisLayout("horizontal")}
                     >
                       Horizontal
                     </Button>
                     <Button
                       size="xs"
-                      variant={
-                        axisLayout() === "vertical" ? "solid" : "outline"
-                      }
-                      onClick={() => props.onSetAxisLayout("vertical")}
+                      variant={axisLayout() === "vertical" ? "solid" : "outline"}
+                      onClick={() => setAxisLayout("vertical")}
                     >
                       Vertical
                     </Button>
@@ -271,7 +266,7 @@ export const RecipeExplorerPanel = (props: RecipeExplorerPanelProps) => {
                 </HStack>
               </Show>
 
-              <Show when={mode() === "grid2d" && gridAxes().length > 1}>
+              <Show when={resolvedMode() === "grid2d" && gridAxes().length > 1}>
                 <HStack
                   alignItems="center"
                   gap="1.5"
@@ -295,7 +290,9 @@ export const RecipeExplorerPanel = (props: RecipeExplorerPanelProps) => {
                           <Button
                             size="xs"
                             variant={axisX() === axis ? "solid" : "outline"}
-                            onClick={() => props.onSetAxisX(axis)}
+                            onClick={() =>
+                              setAxisSelection((prev) => ({ ...prev, x: axis }))
+                            }
                           >
                             {axis}
                           </Button>
@@ -313,7 +310,9 @@ export const RecipeExplorerPanel = (props: RecipeExplorerPanelProps) => {
                           <Button
                             size="xs"
                             variant={axisY() === axis ? "solid" : "outline"}
-                            onClick={() => props.onSetAxisY(axis)}
+                            onClick={() =>
+                              setAxisSelection((prev) => ({ ...prev, y: axis }))
+                            }
                           >
                             {axis}
                           </Button>
@@ -343,9 +342,11 @@ export const RecipeExplorerPanel = (props: RecipeExplorerPanelProps) => {
           </Box>
         </Show>
 
-        <Show when={mode() === "single"}>{renderCell(selectedCombo())}</Show>
+        <Show when={resolvedMode() === "single"}>
+          {renderCell(selectedCombo())}
+        </Show>
 
-        <Show when={useVariantGrid() && mode() === "grid1d" && axis1()}>
+        <Show when={useVariantGrid() && resolvedMode() === "grid1d" && axis1()}>
           <Show
             when={axisLayout() === "horizontal"}
             fallback={
@@ -389,7 +390,7 @@ export const RecipeExplorerPanel = (props: RecipeExplorerPanelProps) => {
         </Show>
 
         <Show
-          when={useVariantGrid() && mode() === "grid2d" && axisX() && axisY()}
+          when={useVariantGrid() && resolvedMode() === "grid2d" && axisX() && axisY()}
         >
           <Box overflowX="auto">
             <table

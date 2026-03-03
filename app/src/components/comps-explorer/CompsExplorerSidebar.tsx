@@ -10,11 +10,13 @@ import {
   DESIGN_SYSTEM_MOTION_KEY,
   DESIGN_SYSTEM_TYPOGRAPHY_KEY,
   ERROR_OVERLAY_COMPONENT_KEY,
+  type ExplorerComponentLink,
   type RecipeMeta,
 } from "./compsExplorer.shared";
 
 type CompsExplorerSidebarProps = {
   recipeList: RecipeMeta[];
+  simpleComponentLinks: ExplorerComponentLink[];
   selectedComponent: string;
 };
 
@@ -64,7 +66,7 @@ export const CompsExplorerSidebar = (props: CompsExplorerSidebarProps) => {
           </Box>
           <HStack alignItems="flex-start" gap="1.5" flexWrap="wrap">
             <A
-              href={`/comps?component=${DESIGN_SYSTEM_COLORS_KEY}`}
+              href={`/comps/${DESIGN_SYSTEM_COLORS_KEY}`}
               class={navLinkClass(
                 props.selectedComponent === DESIGN_SYSTEM_COLORS_KEY,
               )}
@@ -72,7 +74,7 @@ export const CompsExplorerSidebar = (props: CompsExplorerSidebarProps) => {
               Colors
             </A>
             <A
-              href={`/comps?component=${DESIGN_SYSTEM_LAYOUT_KEY}`}
+              href={`/comps/${DESIGN_SYSTEM_LAYOUT_KEY}`}
               class={navLinkClass(
                 props.selectedComponent === DESIGN_SYSTEM_LAYOUT_KEY,
               )}
@@ -80,7 +82,7 @@ export const CompsExplorerSidebar = (props: CompsExplorerSidebarProps) => {
               Layout
             </A>
             <A
-              href={`/comps?component=${DESIGN_SYSTEM_TYPOGRAPHY_KEY}`}
+              href={`/comps/${DESIGN_SYSTEM_TYPOGRAPHY_KEY}`}
               class={navLinkClass(
                 props.selectedComponent === DESIGN_SYSTEM_TYPOGRAPHY_KEY,
               )}
@@ -88,7 +90,7 @@ export const CompsExplorerSidebar = (props: CompsExplorerSidebarProps) => {
               Typography
             </A>
             <A
-              href={`/comps?component=${DESIGN_SYSTEM_MOTION_KEY}`}
+              href={`/comps/${DESIGN_SYSTEM_MOTION_KEY}`}
               class={navLinkClass(
                 props.selectedComponent === DESIGN_SYSTEM_MOTION_KEY,
               )}
@@ -96,7 +98,7 @@ export const CompsExplorerSidebar = (props: CompsExplorerSidebarProps) => {
               Motion
             </A>
             <A
-              href={`/comps?component=${DESIGN_SYSTEM_EFFECTS_KEY}`}
+              href={`/comps/${DESIGN_SYSTEM_EFFECTS_KEY}`}
               class={navLinkClass(
                 props.selectedComponent === DESIGN_SYSTEM_EFFECTS_KEY,
               )}
@@ -108,13 +110,31 @@ export const CompsExplorerSidebar = (props: CompsExplorerSidebarProps) => {
 
         <VStack alignItems="stretch" gap="1.5">
           <Box textStyle="2xs" color="fg.muted" fontWeight="semibold">
+            SIMPLE WRAPPERS
+          </Box>
+          <HStack alignItems="flex-start" gap="1.5" flexWrap="wrap">
+            <For each={props.simpleComponentLinks}>
+              {(component) => (
+                <A
+                  href={`/comps/${component.key}`}
+                  class={navLinkClass(props.selectedComponent === component.key)}
+                >
+                  {component.label}
+                </A>
+              )}
+            </For>
+          </HStack>
+        </VStack>
+
+        <VStack alignItems="stretch" gap="1.5">
+          <Box textStyle="2xs" color="fg.muted" fontWeight="semibold">
             COMPONENTS
           </Box>
           <HStack alignItems="flex-start" gap="1.5" flexWrap="wrap">
             <For each={props.recipeList}>
               {(recipe) => (
                 <A
-                  href={`/comps?component=${recipe.key}`}
+                  href={`/comps/${recipe.key}`}
                   class={navLinkClass(props.selectedComponent === recipe.key)}
                 >
                   {recipe.label}
@@ -122,7 +142,7 @@ export const CompsExplorerSidebar = (props: CompsExplorerSidebarProps) => {
               )}
             </For>
             <A
-              href={`/comps?component=${ERROR_OVERLAY_COMPONENT_KEY}`}
+              href={`/comps/${ERROR_OVERLAY_COMPONENT_KEY}`}
               class={navLinkClass(
                 props.selectedComponent === ERROR_OVERLAY_COMPONENT_KEY,
                 "red",
