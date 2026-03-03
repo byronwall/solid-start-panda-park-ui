@@ -3,7 +3,7 @@ import { css } from "styled-system/css";
 import { Box, HStack, VStack } from "styled-system/jsx";
 import { Button } from "~/components/ui/button";
 import { Code } from "~/components/ui/code";
-import { DEMO_COMPONENTS } from "~/components/ui/demos";
+import { DEMO_COMPONENTS, RenderDemoComponent } from "~/components/ui/demos";
 import {
   resolveCombo,
   type AxisLayout,
@@ -21,7 +21,7 @@ const renderRecipeDemo = (recipeKey: string, variantProps: Combo) => {
   const Demo = DEMO_COMPONENTS[recipeKey];
 
   if (Demo) {
-    return <Demo variantProps={variantProps} />;
+    return <RenderDemoComponent demoKey={recipeKey} variantProps={variantProps} />;
   }
 
   return (

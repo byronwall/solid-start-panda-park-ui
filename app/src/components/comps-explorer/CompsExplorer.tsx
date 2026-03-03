@@ -103,15 +103,22 @@ export const CompsExplorer = (props: CompsExplorerProps) => {
   );
 
   return (
-    <Box minH="dvh" bg="bg.default" color="fg.default">
-      <HStack alignItems="flex-start" gap="0" minH="dvh">
+    <Box h="dvh" overflow="hidden" bg="bg.default" color="fg.default">
+      <HStack alignItems="stretch" gap="0" h="dvh">
         <CompsExplorerSidebar
           recipeList={recipeList}
           simpleComponentLinks={SIMPLE_COMPONENT_LINKS}
           selectedComponent={selectedComponent()}
         />
 
-        <Box as="main" flex="1" minW="0" p={{ base: "3", md: "4" }}>
+        <Box
+          as="main"
+          flex="1"
+          minW="0"
+          h="dvh"
+          overflowY="auto"
+          p={{ base: "3", md: "4" }}
+        >
           <Box pt={{ base: "2", md: "3" }}>
             <VStack alignItems="stretch" gap="5">
               <Show

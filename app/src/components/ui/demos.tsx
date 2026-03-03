@@ -58,83 +58,81 @@ import { ToastDemo } from "./toast";
 import { ToggleGroupDemo } from "./toggle-group";
 import { TooltipDemo } from "./tooltip";
 
-import type { JSX } from "solid-js";
+import type { Component } from "solid-js";
+import { Dynamic } from "solid-js/web";
 
 export interface DemoComponentProps {
   variantProps?: Record<string, string>;
 }
 
-export const DEMO_COMPONENTS: Record<
-  string,
-  (props: DemoComponentProps) => JSX.Element
+export const DEMO_COMPONENTS: Partial<
+  Record<string, Component<DemoComponentProps>>
 > = {
-  absoluteCenter: (props) => (
-    <AbsoluteCenterDemo variantProps={props.variantProps} />
-  ),
-  accordion: (props) => <AccordionDemo variantProps={props.variantProps} />,
-  alert: (props) => <AlertDemo variantProps={props.variantProps} />,
-  avatar: (props) => <AvatarDemo variantProps={props.variantProps} />,
-  badge: (props) => <BadgeDemo variantProps={props.variantProps} />,
-  breadcrumb: (props) => <BreadcrumbDemo variantProps={props.variantProps} />,
-  button: (props) => <ButtonDemo variantProps={props.variantProps} />,
-  card: (props) => <CardDemo variantProps={props.variantProps} />,
-  carousel: (props) => <CarouselDemo variantProps={props.variantProps} />,
-  checkbox: (props) => <CheckboxDemo variantProps={props.variantProps} />,
-  clipboard: (props) => <ClipboardDemo variantProps={props.variantProps} />,
-  code: (props) => <CodeDemo variantProps={props.variantProps} />,
-  collapsible: (props) => <CollapsibleDemo variantProps={props.variantProps} />,
-  colorPicker: (props) => <ColorPickerDemo variantProps={props.variantProps} />,
-  combobox: (props) => <ComboboxDemo variantProps={props.variantProps} />,
-  datePicker: (props) => <DatePickerDemo variantProps={props.variantProps} />,
-  dialog: (props) => <DialogDemo variantProps={props.variantProps} />,
-  drawer: (props) => <DrawerDemo variantProps={props.variantProps} />,
-  editable: (props) => <EditableDemo variantProps={props.variantProps} />,
-  field: (props) => <FieldDemo variantProps={props.variantProps} />,
-  fieldset: (props) => <FieldsetDemo variantProps={props.variantProps} />,
-  fileUpload: (props) => <FileUploadDemo variantProps={props.variantProps} />,
-  group: (props) => <GroupDemo variantProps={props.variantProps} />,
-  heading: (props) => <HeadingDemo variantProps={props.variantProps} />,
-  hoverCard: (props) => <HoverCardDemo variantProps={props.variantProps} />,
-  icon: (props) => <IconDemo variantProps={props.variantProps} />,
-  inputAddon: (props) => <InputAddonDemo variantProps={props.variantProps} />,
-  input: (props) => <InputDemo variantProps={props.variantProps} />,
-  inputGroup: (props) => <InputGroupDemo variantProps={props.variantProps} />,
-  kbd: (props) => <KbdDemo variantProps={props.variantProps} />,
-  link: (props) => <LinkDemo variantProps={props.variantProps} />,
-  menu: (props) => <MenuDemo variantProps={props.variantProps} />,
-  numberInput: (props) => <NumberInputDemo variantProps={props.variantProps} />,
-  pagination: (props) => <PaginationDemo variantProps={props.variantProps} />,
-  pinInput: (props) => <PinInputDemo variantProps={props.variantProps} />,
-  popover: (props) => <PopoverDemo variantProps={props.variantProps} />,
-  progress: (props) => <ProgressDemo variantProps={props.variantProps} />,
-  radioCardGroup: (props) => (
-    <RadioCardGroupDemo variantProps={props.variantProps} />
-  ),
-  radioGroup: (props) => <RadioGroupDemo variantProps={props.variantProps} />,
-  ratingGroup: (props) => <RatingGroupDemo variantProps={props.variantProps} />,
-  scrollArea: (props) => <ScrollAreaDemo variantProps={props.variantProps} />,
-  segmentGroup: (props) => (
-    <SegmentGroupDemo variantProps={props.variantProps} />
-  ),
-  select: (props) => <SelectDemo variantProps={props.variantProps} />,
-  skeleton: (props) => <SkeletonDemo variantProps={props.variantProps} />,
-  slider: (props) => <SliderDemo variantProps={props.variantProps} />,
-  simpleDialog: (props) => <SimpleDialogDemo variantProps={props.variantProps} />,
-  simplePopover: (props) => (
-    <SimplePopoverDemo variantProps={props.variantProps} />
-  ),
-  simpleSelect: (props) => <SimpleSelectDemo variantProps={props.variantProps} />,
-  spinner: (props) => <SpinnerDemo variantProps={props.variantProps} />,
-  splitter: (props) => <SplitterDemo variantProps={props.variantProps} />,
-  switchRecipe: (props) => (
-    <SwitchRecipeDemo variantProps={props.variantProps} />
-  ),
-  table: (props) => <TableDemo variantProps={props.variantProps} />,
-  tabs: (props) => <TabsDemo variantProps={props.variantProps} />,
-  tagsInput: (props) => <TagsInputDemo variantProps={props.variantProps} />,
-  text: (props) => <TextDemo variantProps={props.variantProps} />,
-  textarea: (props) => <TextareaDemo variantProps={props.variantProps} />,
-  toast: (props) => <ToastDemo variantProps={props.variantProps} />,
-  toggleGroup: (props) => <ToggleGroupDemo variantProps={props.variantProps} />,
-  tooltip: (props) => <TooltipDemo variantProps={props.variantProps} />,
+  absoluteCenter: AbsoluteCenterDemo,
+  accordion: AccordionDemo,
+  alert: AlertDemo,
+  avatar: AvatarDemo,
+  badge: BadgeDemo,
+  breadcrumb: BreadcrumbDemo,
+  button: ButtonDemo,
+  card: CardDemo,
+  carousel: CarouselDemo,
+  checkbox: CheckboxDemo,
+  clipboard: ClipboardDemo,
+  code: CodeDemo,
+  collapsible: CollapsibleDemo,
+  colorPicker: ColorPickerDemo,
+  combobox: ComboboxDemo,
+  datePicker: DatePickerDemo,
+  dialog: DialogDemo,
+  drawer: DrawerDemo,
+  editable: EditableDemo,
+  field: FieldDemo,
+  fieldset: FieldsetDemo,
+  fileUpload: FileUploadDemo,
+  group: GroupDemo,
+  heading: HeadingDemo,
+  hoverCard: HoverCardDemo,
+  icon: IconDemo,
+  inputAddon: InputAddonDemo,
+  input: InputDemo,
+  inputGroup: InputGroupDemo,
+  kbd: KbdDemo,
+  link: LinkDemo,
+  menu: MenuDemo,
+  numberInput: NumberInputDemo,
+  pagination: PaginationDemo,
+  pinInput: PinInputDemo,
+  popover: PopoverDemo,
+  progress: ProgressDemo,
+  radioCardGroup: RadioCardGroupDemo,
+  radioGroup: RadioGroupDemo,
+  ratingGroup: RatingGroupDemo,
+  scrollArea: ScrollAreaDemo,
+  segmentGroup: SegmentGroupDemo,
+  select: SelectDemo,
+  skeleton: SkeletonDemo,
+  slider: SliderDemo,
+  simpleDialog: SimpleDialogDemo,
+  simplePopover: SimplePopoverDemo,
+  simpleSelect: SimpleSelectDemo,
+  spinner: SpinnerDemo,
+  splitter: SplitterDemo,
+  switchRecipe: SwitchRecipeDemo,
+  table: TableDemo,
+  tabs: TabsDemo,
+  tagsInput: TagsInputDemo,
+  text: TextDemo,
+  textarea: TextareaDemo,
+  toast: ToastDemo,
+  toggleGroup: ToggleGroupDemo,
+  tooltip: TooltipDemo,
 };
+
+type RenderDemoComponentProps = DemoComponentProps & {
+  demoKey: string;
+};
+
+export const RenderDemoComponent = (props: RenderDemoComponentProps) => (
+  <Dynamic component={DEMO_COMPONENTS[props.demoKey]} variantProps={props.variantProps} />
+);
