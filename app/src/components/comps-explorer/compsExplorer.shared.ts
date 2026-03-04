@@ -27,6 +27,7 @@ export const SIMPLE_SELECT_COMPONENT_KEY = "simpleSelect";
 export const CLOSE_BUTTON_COMPONENT_KEY = "closeButton";
 export const DISPLAY_VALUE_COMPONENT_KEY = "displayValue";
 export const ICON_BUTTON_COMPONENT_KEY = "iconButton";
+export const MARKDOWN_RENDERER_COMPONENT_KEY = "markdownRenderer";
 
 export type ExplorerComponentLink = {
   key: string;
@@ -43,6 +44,7 @@ export const DOCS_ONLY_COMPONENT_LINKS: ExplorerComponentLink[] = [
   { key: CLOSE_BUTTON_COMPONENT_KEY, label: "Close Button" },
   { key: DISPLAY_VALUE_COMPONENT_KEY, label: "Display Value" },
   { key: ICON_BUTTON_COMPONENT_KEY, label: "Icon Button" },
+  { key: MARKDOWN_RENDERER_COMPONENT_KEY, label: "Markdown Renderer" },
 ];
 
 export const friendlyName = (value: string) =>

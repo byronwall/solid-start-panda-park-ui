@@ -6,6 +6,7 @@ import {
 } from "./DesignSystemOverview";
 import { CompsExplorerSidebar } from "./CompsExplorerSidebar";
 import { ErrorOverlayPlayground } from "./ErrorOverlayPlayground";
+import { MarkdownRendererPlayground } from "./MarkdownRendererPlayground";
 import { RecipeExplorerPanel } from "./RecipeExplorerPanel";
 import {
   DESIGN_SYSTEM_COLORS_KEY,
@@ -15,6 +16,7 @@ import {
   DESIGN_SYSTEM_TYPOGRAPHY_KEY,
   DOCS_ONLY_COMPONENT_LINKS,
   ERROR_OVERLAY_COMPONENT_KEY,
+  MARKDOWN_RENDERER_COMPONENT_KEY,
   SIMPLE_COMPONENT_LINKS,
   friendlyName,
   getVariantMap,
@@ -125,8 +127,14 @@ export const CompsExplorer = (props: CompsExplorerProps) => {
   );
 
   return (
-    <Box h="dvh" overflow="hidden" bg="bg.default" color="fg.default">
-      <HStack alignItems="stretch" gap="0" h="dvh">
+    <Box
+      position="fixed"
+      inset="0"
+      overflow="hidden"
+      bg="bg.default"
+      color="fg.default"
+    >
+      <HStack alignItems="stretch" gap="0" h="full">
         <CompsExplorerSidebar
           recipeList={recipeList}
           simpleComponentLinks={SIMPLE_COMPONENT_LINKS}
@@ -138,7 +146,7 @@ export const CompsExplorer = (props: CompsExplorerProps) => {
           as="main"
           flex="1"
           minW="0"
-          h="dvh"
+          h="full"
           overflowY="auto"
           p={{ base: "3", md: "4" }}
         >
@@ -148,14 +156,32 @@ export const CompsExplorer = (props: CompsExplorerProps) => {
                 when={isDesignSystemKey(selectedComponent())}
                 fallback={
                   <Show
-                    when={selectedComponent() === ERROR_OVERLAY_COMPONENT_KEY}
+                    when={selectedComponent() === MARKDOWN_RENDERER_COMPONENT_KEY}
                     fallback={
-                      <Show when={selectedRecipe()}>
-                        {(recipe) => <RecipeExplorerPanel recipe={recipe()} />}
+                      <Show
+                        when={
+                          selectedComponent() === ERROR_OVERLAY_COMPONENT_KEY
+                        }
+                        fallback={
+                          <Show
+                            when={selectedRecipe()}
+                            fallback={
+                              <Box textStyle="sm" color="fg.muted">
+                                No component selected.
+                              </Box>
+                            }
+                          >
+                            {(recipe) => (
+                              <RecipeExplorerPanel recipe={recipe()} />
+                            )}
+                          </Show>
+                        }
+                      >
+                        <ErrorOverlayPlayground />
                       </Show>
                     }
                   >
-                    <ErrorOverlayPlayground />
+                    <MarkdownRendererPlayground />
                   </Show>
                 }
               >

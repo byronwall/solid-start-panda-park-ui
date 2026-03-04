@@ -17,6 +17,8 @@ Repository-level guidance for contributors and coding agents.
 - Ark Solid `asChild` callback props are getter functions. Spread `...props()` in wrapper callbacks.
 - Keep reusable UI out of `app/src/routes/`; put shared code in `app/src/components/*`.
 - Prefer tokenized Panda styles over one-off CSS values.
+- For `styled-system`/Panda helper props (`jsx` patterns, `css`, recipe props), use static literal values only.
+- Avoid dynamic prop-driven class/value generation in TSX for helper props; map to static variants or use explicit inline style for truly runtime-dynamic values.
 - Prefer explicit labels for form inputs; avoid placeholder-only labeling unless tightly constrained.
 
 ## Repo Structure
@@ -97,6 +99,9 @@ Use these when the task matches the skill intent. Open each skill's `SKILL.md` b
   - Prefer explicit `Label` + `Control` composition (`Field`, `Input`, `Textarea`, `Select`, `Combobox`).
 - Overlay controls:
   - Compose as `Root -> Trigger/Anchor -> Positioner -> Content`; use portal only when needed.
+- Panda/styled-system values:
+  - Keep helper props static (compile-time friendly). Do not build dynamic class values in TSX for pattern props like `columns`, `gridTemplateColumns`, etc.
+  - Prefer static variant mapping; if value must be runtime-dynamic, use explicit inline `style` for that one property.
 - Dialog-like controls:
   - Compose as `Root -> Backdrop -> Positioner -> Content -> Header/Body/Footer`.
 - Collection/list controls:
