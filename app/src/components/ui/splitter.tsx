@@ -1,5 +1,7 @@
 import { Splitter } from "@ark-ui/solid/splitter";
+import { Show } from "solid-js";
 import type { ComponentProps } from "solid-js";
+import { isServer } from "solid-js/web";
 import { createStyleContext } from "styled-system/jsx";
 import { splitter } from "styled-system/recipes";
 import {
@@ -30,7 +32,22 @@ export interface SplitterDemoProps {
 export const SplitterDemo = (props: SplitterDemoProps) => {
   return (
     <DemoVStack alignItems="stretch" gap="4" width="full" maxW="6xl">
-      <DemoHStack alignItems="start" gap="6" flexWrap="wrap">
+      <Show
+        when={!isServer}
+        fallback={
+          <DemoBox
+            p="3"
+            borderWidth="1px"
+            borderColor="border"
+            borderRadius="l2"
+            textStyle="sm"
+            color="fg.muted"
+          >
+            Splitter preview is interactive on the client.
+          </DemoBox>
+        }
+      >
+        <DemoHStack alignItems="start" gap="6" flexWrap="wrap">
         <DemoVStack alignItems="stretch" gap="4" flex="1" minW="72">
           <DemoBox textStyle="xs" color="fg.muted">
             Horizontal
@@ -115,7 +132,8 @@ export const SplitterDemo = (props: SplitterDemoProps) => {
             </Panel>
           </Root>
         </DemoVStack>
-      </DemoHStack>
+        </DemoHStack>
+      </Show>
     </DemoVStack>
   );
 };
