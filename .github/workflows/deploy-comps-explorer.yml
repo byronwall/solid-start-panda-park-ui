@@ -30,6 +30,10 @@ jobs:
         with:
           version: 10
 
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -39,11 +43,15 @@ jobs:
 
       - name: Resolve site base path
         run: |
-          if [ "${{ github.event.repository.name }}" = "${{ github.repository_owner }}.github.io" ]; then
-            echo "BASE_PATH=/" >> "$GITHUB_ENV"
+          if [ -n "${{ steps.pages.outputs.base_path }}" ]; then
+            RESOLVED_BASE_PATH="${{ steps.pages.outputs.base_path }}"
+          elif [ "${{ github.event.repository.name }}" = "${{ github.repository_owner }}.github.io" ]; then
+            RESOLVED_BASE_PATH="/"
           else
-            echo "BASE_PATH=/${{ github.event.repository.name }}/" >> "$GITHUB_ENV"
+            RESOLVED_BASE_PATH="/${{ github.event.repository.name }}/"
           fi
+          echo "BASE_PATH=${RESOLVED_BASE_PATH}" >> "$GITHUB_ENV"
+          echo "Resolved BASE_PATH=${RESOLVED_BASE_PATH}"
 
       - name: Install dependencies
         run: |
@@ -69,9 +77,6 @@ jobs:
             echo "::error::Expected prerendered HTML files, but found ${HTML_COUNT}."
             exit 1
           fi
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
