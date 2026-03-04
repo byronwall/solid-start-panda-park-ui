@@ -55,10 +55,20 @@ jobs:
       - name: Build static site
         env:
           BASE_PATH: ${{ env.BASE_PATH }}
+          CI_SSG_PRERENDER: "true"
         run: pnpm build
 
       - name: Disable Jekyll
         run: touch .output/public/.nojekyll
+
+      - name: Verify prerendered HTML output
+        run: |
+          HTML_COUNT="$(find .output/public -name '*.html' | wc -l | tr -d ' ')"
+          echo "Prerendered HTML files: ${HTML_COUNT}"
+          if [ "${HTML_COUNT}" -lt 2 ]; then
+            echo "::error::Expected prerendered HTML files, but found ${HTML_COUNT}."
+            exit 1
+          fi
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
