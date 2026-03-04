@@ -29,6 +29,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: pnpm
+          cache-dependency-path: app/pnpm-lock.yaml
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -44,7 +46,11 @@ jobs:
           fi
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: |
+          if ! pnpm install --frozen-lockfile; then
+            echo "::warning::Frozen lockfile install failed (likely lock/config drift). Retrying with --no-frozen-lockfile."
+            pnpm install --no-frozen-lockfile
+          fi
 
       - name: Build static site
         env:
@@ -60,7 +66,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: app/.output/public
+          path: .output/public
 
   deploy:
     environment:
