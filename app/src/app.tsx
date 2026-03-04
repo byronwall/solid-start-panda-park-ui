@@ -20,6 +20,9 @@ type ClientExceptionState = {
 export default function App() {
   const [clientException, setClientException] =
     createSignal<ClientExceptionState | null>(null);
+  const routerBase = import.meta.env.SSR
+    ? "/"
+    : import.meta.env.SERVER_BASE_URL || "/";
 
   onMount(() => {
     const handleError = (event: ErrorEvent) => {
@@ -46,6 +49,7 @@ export default function App() {
 
   return (
     <Router
+      base={routerBase}
       root={(props) => (
         <ErrorBoundary
           fallback={(error, reset) => (
