@@ -27,6 +27,35 @@ pnpm -C app build
 pnpm -C app start
 ```
 
+## GitHub Pages Comps Explorer
+
+This repo includes a Pages workflow that builds a static, pre-rendered Comps Explorer and deploys it to GitHub Pages.
+
+- Workflow: [`.github/workflows/deploy-comps-explorer.yml`](.github/workflows/deploy-comps-explorer.yml)
+- Triggers: push to `main` and manual run (`workflow_dispatch`)
+- Build output uploaded to Pages: `app/.output/public`
+
+How it works:
+
+1. `actions/configure-pages` resolves the repository base path.
+2. The workflow sets `BASE_PATH` so the app works under project URLs like `/solid-start-panda-park-ui/`.
+3. The workflow sets `CI_SSG_PRERENDER=true` for the build, which enables CI-only prerender settings in [`app/app.config.ts`](app/app.config.ts):
+   - pre-render known explorer routes (`/`, `/comps`, `/comps/:component`)
+   - enable link crawling (`crawlLinks: true`) to emit additional static HTML
+4. `.nojekyll` is added so `_build/*` assets are served correctly.
+5. A safety check fails the build if prerendered `.html` files were not generated.
+
+Local production-like build check:
+
+```bash
+BASE_PATH=/solid-start-panda-park-ui/ CI_SSG_PRERENDER=true pnpm -C app build
+```
+
+After deploy, the explorer is available at:
+
+- Project pages: `https://<owner>.github.io/<repo>/` (for this repo: [https://byronwall.github.io/solid-start-panda-park-ui/](https://byronwall.github.io/solid-start-panda-park-ui/))
+- User/organization pages repo (`<owner>.github.io`): `https://<owner>.github.io/`
+
 ## UI Surface
 
 Base Park-style wrappers are in `app/src/components/ui/*`, including reconciled utility wrappers:
@@ -42,4 +71,3 @@ Base Park-style wrappers are in `app/src/components/ui/*`, including reconciled 
 ## Reconciliation Notes
 
 See `/docs/visual-notes-reconciliation-2026-02-15.md` for the full import list and rationale.
-
