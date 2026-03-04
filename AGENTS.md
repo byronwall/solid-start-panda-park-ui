@@ -11,6 +11,7 @@ Repository-level guidance for contributors and coding agents.
 - Prefer SolidStart data APIs (`query` + `createResource` for reads, server actions for writes).
 - For `createResource`, prefer reading `resource.latest` by default to avoid transient empty/loading blips during revalidation.
 - Use `resource()` directly only when you intentionally want a pending/loading transition in the UI.
+- For app navigation, prefer Solid Router navigation (`useNavigate`, `<A>`, router-aware `Link`) with root-relative route paths (for example `"/"` and `"/comps"`); avoid raw anchor navigation that can bypass configured router base paths.
 - Prefer `~/components/ui/*` wrappers over route-level direct Ark composition.
 - Prefer ParkUI wrappers for interactive controls over native elements when a wrapper exists.
 - Use `~/components/ui/tooltip` for user-facing hover/focus help text; avoid `title` attributes.

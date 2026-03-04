@@ -1,4 +1,4 @@
-import { A } from "@solidjs/router";
+import { A, useNavigate } from "@solidjs/router";
 import { For, createMemo } from "solid-js";
 import { css } from "styled-system/css";
 import { Box, HStack, VStack } from "styled-system/jsx";
@@ -165,6 +165,7 @@ const navLinkClass = (isSelected: boolean, selectedColor = "blue") =>
   });
 
 export const CompsExplorerSidebar = (props: CompsExplorerSidebarProps) => {
+  const navigate = useNavigate();
   const categorizedComponents = createMemo(() => {
     const all = [
       ...props.recipeList,
@@ -191,11 +192,14 @@ export const CompsExplorerSidebar = (props: CompsExplorerSidebarProps) => {
       zIndex="10"
     >
       <VStack alignItems="stretch" gap="2">
-        <A href="/" class={css({ textDecoration: "none" })}>
-          <Button variant="outline" size="sm" width="full">
-            Back Home
-          </Button>
-        </A>
+        <Button
+          variant="outline"
+          size="sm"
+          width="full"
+          onClick={() => navigate("/")}
+        >
+          Back Home
+        </Button>
 
         <VStack alignItems="stretch" gap="1.5">
           <Box textStyle="2xs" color="fg.muted" fontWeight="semibold">

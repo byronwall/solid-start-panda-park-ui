@@ -1,10 +1,12 @@
 import { ArrowRight } from "lucide-solid";
+import { useNavigate } from "@solidjs/router";
 import { AbsoluteCenter } from "~/components/ui/absolute-center";
 import { Button } from "~/components/ui/button";
-import { Link } from "~/components/ui/link";
 import { Box, HStack, VStack } from "styled-system/jsx";
 
 export default function HomeRoute() {
+  const navigate = useNavigate();
+
   return (
     <>
       <AbsoluteCenter axis="both">
@@ -19,12 +21,10 @@ export default function HomeRoute() {
           </VStack>
 
           <HStack gap="3" flexWrap="wrap" justifyContent="center">
-            <Link href="/comps" textDecoration="none">
-              <Button variant="solid" size="lg">
-                Open Comps Explorer
-                <ArrowRight />
-              </Button>
-            </Link>
+            <Button variant="solid" size="lg" onClick={() => navigate("/comps")}>
+              Open Comps Explorer
+              <ArrowRight />
+            </Button>
           </HStack>
         </VStack>
       </AbsoluteCenter>
