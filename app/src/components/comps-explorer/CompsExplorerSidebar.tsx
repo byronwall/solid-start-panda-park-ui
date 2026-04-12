@@ -4,6 +4,7 @@ import { css } from "styled-system/css";
 import { Box, HStack, VStack } from "styled-system/jsx";
 import { Button } from "~/components/ui/button";
 import {
+  compsExplorerPath,
   DESIGN_SYSTEM_COLORS_KEY,
   DESIGN_SYSTEM_EFFECTS_KEY,
   DESIGN_SYSTEM_LAYOUT_KEY,
@@ -207,7 +208,7 @@ export const CompsExplorerSidebar = (props: CompsExplorerSidebarProps) => {
           </Box>
           <HStack alignItems="flex-start" gap="1.5" flexWrap="wrap">
             <A
-              href={`/comps/${DESIGN_SYSTEM_COLORS_KEY}`}
+              href={compsExplorerPath(DESIGN_SYSTEM_COLORS_KEY)}
               class={navLinkClass(
                 props.selectedComponent === DESIGN_SYSTEM_COLORS_KEY,
               )}
@@ -215,7 +216,7 @@ export const CompsExplorerSidebar = (props: CompsExplorerSidebarProps) => {
               Colors
             </A>
             <A
-              href={`/comps/${DESIGN_SYSTEM_LAYOUT_KEY}`}
+              href={compsExplorerPath(DESIGN_SYSTEM_LAYOUT_KEY)}
               class={navLinkClass(
                 props.selectedComponent === DESIGN_SYSTEM_LAYOUT_KEY,
               )}
@@ -223,7 +224,7 @@ export const CompsExplorerSidebar = (props: CompsExplorerSidebarProps) => {
               Layout
             </A>
             <A
-              href={`/comps/${DESIGN_SYSTEM_TYPOGRAPHY_KEY}`}
+              href={compsExplorerPath(DESIGN_SYSTEM_TYPOGRAPHY_KEY)}
               class={navLinkClass(
                 props.selectedComponent === DESIGN_SYSTEM_TYPOGRAPHY_KEY,
               )}
@@ -231,7 +232,7 @@ export const CompsExplorerSidebar = (props: CompsExplorerSidebarProps) => {
               Typography
             </A>
             <A
-              href={`/comps/${DESIGN_SYSTEM_MOTION_KEY}`}
+              href={compsExplorerPath(DESIGN_SYSTEM_MOTION_KEY)}
               class={navLinkClass(
                 props.selectedComponent === DESIGN_SYSTEM_MOTION_KEY,
               )}
@@ -239,7 +240,7 @@ export const CompsExplorerSidebar = (props: CompsExplorerSidebarProps) => {
               Motion
             </A>
             <A
-              href={`/comps/${DESIGN_SYSTEM_EFFECTS_KEY}`}
+              href={compsExplorerPath(DESIGN_SYSTEM_EFFECTS_KEY)}
               class={navLinkClass(
                 props.selectedComponent === DESIGN_SYSTEM_EFFECTS_KEY,
               )}
@@ -264,7 +265,7 @@ export const CompsExplorerSidebar = (props: CompsExplorerSidebarProps) => {
                     <For each={category.items}>
                       {(component) => (
                         <A
-                          href={`/comps/${component.key}`}
+                          href={compsExplorerPath(component.key)}
                           class={navLinkClass(
                             props.selectedComponent === component.key,
                             component.key === ERROR_OVERLAY_COMPONENT_KEY

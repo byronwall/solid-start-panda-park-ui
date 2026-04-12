@@ -16,6 +16,7 @@ export type RecipeMeta = {
 };
 
 export const ERROR_OVERLAY_COMPONENT_KEY = "error-overlay";
+export const COMPS_EXPLORER_BASE_PATH = "/_internal/comps";
 export const DESIGN_SYSTEM_COLORS_KEY = "design-system-colors";
 export const DESIGN_SYSTEM_LAYOUT_KEY = "design-system-layout";
 export const DESIGN_SYSTEM_TYPOGRAPHY_KEY = "design-system-typography";
@@ -86,3 +87,8 @@ export const resolveCombo = (recipe: RecipeMeta, selected: Combo): Combo => {
 
   return next;
 };
+
+export const compsExplorerPath = (componentKey?: string) =>
+  componentKey
+    ? `${COMPS_EXPLORER_BASE_PATH}/${componentKey}`
+    : COMPS_EXPLORER_BASE_PATH;
