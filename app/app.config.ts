@@ -48,6 +48,9 @@ const ciPrerenderConfig = forceSsgPrerender
 
 export default defineConfig({
   server: {
+    experimental: {
+      websocket: true,
+    },
     baseURL: normalizedBasePath,
     ...(ciPrerenderConfig ? { prerender: ciPrerenderConfig } : {}),
   },
@@ -58,4 +61,10 @@ export default defineConfig({
       include: ["solid-markdown > micromark", "solid-markdown > unified"],
     },
   },
+}).addRouter({
+  name: "ws",
+  type: "http",
+  handler: "./src/ws/jobs.ts",
+  target: "server",
+  base: "/ws/jobs",
 });

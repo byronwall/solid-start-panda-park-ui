@@ -86,6 +86,37 @@ Use these when the task matches the skill intent. Open each skill's `SKILL.md` b
 - Root `.mcp.json` includes Ark UI MCP server wiring for component-aware assistance.
 - `app/vitest.config.ts` provides baseline testing config and `~` alias resolution.
 
+## Jobs And Websockets
+
+- Websocket support is enabled in `app/app.config.ts` via `server.experimental.websocket`.
+- The websocket router for job traffic is registered in `app/app.config.ts` with:
+  - `handler: "./src/ws/jobs.ts"`
+  - `base: "/ws/jobs"`
+- Keep websocket handlers under `app/src/ws/*`. Prefer a thin route entrypoint that owns transport concerns only.
+- For new job/event channels, define explicit message types in the handler or in a colocated shared module. Do not send ad-hoc untyped payloads.
+- On connect, send an initial state message so clients can hydrate without waiting for a later event.
+- If the client needs liveness checks or reconnect probing, prefer a simple typed ping/pong message over custom string parsing.
+- Track connected peers in-memory only for transient live updates. If durable job state is needed, store job records separately and have the websocket layer broadcast snapshots/updates from that source of truth.
+- Keep job creation and execution logic out of `app.config.ts`. `app.config.ts` should only enable websockets and register the router.
+
+## Job Creation Workflow
+
+- Add or extend the transport endpoint in `app/src/ws/jobs.ts`.
+- Model the job protocol first:
+  - define client messages
+  - define server messages
+  - define the initial payload clients receive on connect
+- Put durable job state, queueing, or background execution in a separate server module under `app/src/lib` or a feature folder. The websocket handler should call into that module rather than owning business logic directly.
+- When adding a new job type, provide:
+  - a creation entrypoint (usually a server action or server module function)
+  - a way to read current job state
+  - a websocket update path that pushes status changes to connected peers
+- Prefer stable job ids and status enums (`pending`, `running`, `completed`, `failed`) so UI and transport code stay predictable.
+- Verify job/websocket changes with:
+  - `pnpm -C app type-check`
+  - `pnpm -C app build`
+  - a manual websocket smoke test against `/ws/jobs`
+
 ## Component System Registry (Source Of Truth)
 
 - Component registry lives in `app/src/components/ui/demos.tsx`.
