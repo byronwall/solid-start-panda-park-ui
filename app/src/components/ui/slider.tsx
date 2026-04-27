@@ -1,6 +1,6 @@
 import { ark } from "@ark-ui/solid/factory";
 import { Slider, useSliderContext } from "@ark-ui/solid/slider";
-import { type ComponentProps, For, type JSX, Show, splitProps } from "solid-js";
+import { type ComponentProps, createMemo, For, type JSX, Show, splitProps } from "solid-js";
 import { createStyleContext } from "styled-system/jsx";
 import { slider } from "styled-system/recipes";
 
@@ -77,7 +77,7 @@ export interface SliderDemoProps {
 }
 
 export const SliderDemo = (props: SliderDemoProps) => {
-  const isVertical = props.variantProps?.orientation === "vertical";
+  const isVertical = createMemo(() => props.variantProps?.orientation === "vertical");
 
   return (
     <Root
@@ -85,8 +85,8 @@ export const SliderDemo = (props: SliderDemoProps) => {
       defaultValue={[30]}
       min={0}
       max={100}
-      width={isVertical ? "16" : "72"}
-      height={isVertical ? "40" : undefined}
+      width={isVertical() ? "16" : "72"}
+      height={isVertical() ? "40" : undefined}
     >
       <Label>Volume</Label>
       <Control>

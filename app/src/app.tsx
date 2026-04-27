@@ -1,4 +1,5 @@
 import { Router } from "@solidjs/router";
+import { MetaProvider } from "@solidjs/meta";
 import { FileRoutes } from "@solidjs/start/router";
 import {
   ErrorBoundary,
@@ -48,47 +49,49 @@ export default function App() {
   });
 
   return (
-    <Router
-      base={routerBase}
-      root={(props) => (
-        <ErrorBoundary
-          fallback={(error, reset) => (
+    <MetaProvider>
+      <Router
+        base={routerBase}
+        root={(props) => (
+          <ErrorBoundary
+            fallback={(error, reset) => (
+              <GlobalErrorOverlay
+                title="Something went wrong"
+                message="An unexpected error interrupted the app. You can retry or reload the page."
+                error={error}
+                secondaryActionLabel="Reload page"
+                onSecondaryAction={() => {
+                  window.location.reload();
+                }}
+                primaryActionLabel="Try again"
+                onPrimaryAction={() => {
+                  setClientException(null);
+                  reset();
+                }}
+              />
+            )}
+          >
+            <Suspense>{props.children}</Suspense>
             <GlobalErrorOverlay
-              title="Something went wrong"
-              message="An unexpected error interrupted the app. You can retry or reload the page."
-              error={error}
-              secondaryActionLabel="Reload page"
+              title="Client exception"
+              message="The page resumed with a stale connection and hit an uncaught client error."
+              error={clientException()?.error}
+              open={() => clientException() !== null}
+              secondaryActionLabel="Dismiss"
               onSecondaryAction={() => {
+                setClientException(null);
+              }}
+              primaryActionLabel="Reload page"
+              onPrimaryAction={() => {
                 window.location.reload();
               }}
-              primaryActionLabel="Try again"
-              onPrimaryAction={() => {
-                setClientException(null);
-                reset();
-              }}
             />
-          )}
-        >
-          <Suspense>{props.children}</Suspense>
-          <GlobalErrorOverlay
-            title="Client exception"
-            message="The page resumed with a stale connection and hit an uncaught client error."
-            error={clientException()?.error}
-            open={() => clientException() !== null}
-            secondaryActionLabel="Dismiss"
-            onSecondaryAction={() => {
-              setClientException(null);
-            }}
-            primaryActionLabel="Reload page"
-            onPrimaryAction={() => {
-              window.location.reload();
-            }}
-          />
-        </ErrorBoundary>
-      )}
-    >
-      <FileRoutes />
-      <ConsoleLogCaptureProvider />
-    </Router>
+          </ErrorBoundary>
+        )}
+      >
+        <FileRoutes />
+        <ConsoleLogCaptureProvider />
+      </Router>
+    </MetaProvider>
   );
 }

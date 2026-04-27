@@ -1,6 +1,6 @@
 import { Field } from "@ark-ui/solid/field";
 import type { ComponentProps } from "solid-js";
-import { Box, VStack, createStyleContext } from "styled-system/jsx";
+import { VStack, createStyleContext } from "styled-system/jsx";
 import { field } from "styled-system/recipes";
 import { Input } from "./input";
 

@@ -13,16 +13,20 @@
     "panda": "panda codegen"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^2.0.24",
     "@ark-ui/solid": "^5.30.0",
+    "@solidjs/meta": "^0.29.4",
     "@solidjs/router": "^0.15.3",
     "@solidjs/start": "^1.1.0",
+    "ai": "^5.0.39",
     "lucide-solid": "^0.562.0",
     "mermaid": "^11.12.2",
     "remark-gfm": "^4.0.1",
     "shiki": "^3.21.0",
     "solid-js": "^1.9.5",
     "solid-markdown": "^2.1.1",
-    "vinxi": "^0.5.7"
+    "vinxi": "^0.5.7",
+    "zod": "^4.1.5"
   },
   "engines": {
     "node": ">=22"

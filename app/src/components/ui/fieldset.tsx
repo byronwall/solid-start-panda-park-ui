@@ -1,7 +1,7 @@
 import { ark } from "@ark-ui/solid/factory";
 import { Fieldset } from "@ark-ui/solid/fieldset";
 import type { ComponentProps } from "solid-js";
-import { Box, VStack, createStyleContext } from "styled-system/jsx";
+import { VStack, createStyleContext } from "styled-system/jsx";
 import { fieldset } from "styled-system/recipes";
 import * as DemoCheckbox from "./checkbox";
 

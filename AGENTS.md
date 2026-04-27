@@ -8,6 +8,7 @@ Repository-level guidance for contributors and coding agents.
 - Use `pnpm` for package/scripts commands; use `pnpm dlx` for one-off CLIs.
 - Dependency installs are user-run by default: ask the user to run `pnpm i` (and any required install/update command) locally when dependencies change.
 - Do not rely on sandboxed installs for verification; sandbox networking/store behavior is unreliable in this environment.
+- AI SDK/OpenAI setup lives in `app/.env.example`. Provide `OPENAI_API_KEY`; prefer `OPENAI_MODEL=gpt-5-mini` for default work and `OPENAI_HEAVY_MODEL=gpt-5.4` for heavier tasks.
 - Prefer SolidStart data APIs (`query` + `createResource` for reads, server actions for writes).
 - For `createResource`, prefer reading `resource.latest` by default to avoid transient empty/loading blips during revalidation.
 - Use `resource()` directly only when you intentionally want a pending/loading transition in the UI.
@@ -26,6 +27,7 @@ Repository-level guidance for contributors and coding agents.
 
 - App code: `app/src/*`
 - Shared UI wrappers: `app/src/components/ui/*`
+- Router action URL helper: `app/src/lib/router/action-url.ts`
 - Theme/tokens/recipes: `app/src/theme/*`
 - Generated styles/types: `app/styled-system/*`
 - Local reusable agent skills: `.agents/skills/*`
@@ -40,6 +42,54 @@ Run from `app/` (or use `pnpm -C app <cmd>`):
 - `pnpm type-check`
 - `pnpm test`
 - `pnpm build`
+
+## AI SDK + OpenAI
+
+- The app package includes the Vercel AI SDK deps: `ai`, `@ai-sdk/openai`, and `zod`.
+- Keep provider calls on the server: server actions, server modules under `app/src/lib`, or other server-only entrypoints. Do not expose `OPENAI_API_KEY` to client code.
+- Use the OpenAI provider from `@ai-sdk/openai` and read the API key from `process.env.OPENAI_API_KEY`.
+- Treat `gpt-5-mini` as the default low-latency/cost model and `gpt-5.4` as the heavier reasoning/escalation model unless the user asks for something else.
+- Prefer a thin local wrapper for model selection so routes/components do not hard-code model ids all over the app.
+
+## AI SDK Structured Data
+
+- Prefer AI SDK Core structured output with `generateText()` or `streamText()` plus `Output.object({ schema })`.
+- Use `zod` schemas for output validation and type inference; export the schema from a server module if multiple call sites need the same contract.
+- Use `streamText(...).partialOutputStream` only when partial object updates improve UX. For most server-side workflows, start with non-streaming structured output.
+- `generateObject()` and `streamObject()` still exist in the SDK, but current docs treat `output` on `generateText`/`streamText` as the standard path. Prefer the standard path for new code.
+- Keep schemas narrow and explicit. Avoid "catch-all" objects when the UI or downstream logic depends on stable keys.
+- Validate business rules after the model call as needed. Schema validation confirms shape, not application correctness.
+- When a route/action needs model-generated JSON for UI state, return the typed object from the server boundary instead of stringifying/parsing in the client.
+
+Example:
+
+```ts
+import { openai } from "@ai-sdk/openai";
+import { generateText, Output } from "ai";
+import { z } from "zod";
+
+const recipeSchema = z.object({
+  title: z.string(),
+  steps: z.array(z.string()).min(1),
+  ingredients: z.array(
+    z.object({
+      name: z.string(),
+      amount: z.string(),
+    }),
+  ),
+});
+
+const { output } = await generateText({
+  model: openai(process.env.OPENAI_HEAVY_MODEL ?? "gpt-5.4"),
+  output: Output.object({ schema: recipeSchema }),
+  prompt: "Generate a weeknight pasta recipe.",
+});
+```
+
+References:
+
+- AI SDK structured data docs: https://ai-sdk.dev/docs/ai-sdk-core/generating-structured-data
+- AI SDK OpenAI provider docs: https://ai-sdk.dev/providers/ai-sdk-providers/openai
 
 ## Skills In This Repo
 
@@ -72,6 +122,15 @@ Use these when the task matches the skill intent. Open each skill's `SKILL.md` b
 - Use the shared `Tooltip` wrapper for hover/focus help content; avoid native `title` behavior.
 - Keep SSR and first client render structure stable for overlay-heavy controls.
 - Forward wrapper props to the rendered slot that actually owns DOM/styling.
+
+## Router Actions + Forms
+
+- For UI-triggered writes, prefer real `<form method="post">` submissions wired to server actions over imperative action calls.
+- Define form-backed action handlers to accept `FormData` and give the action a stable name.
+- Normalize action URLs with `normalizeActionUrl(...)` from `app/src/lib/router/action-url.ts` before passing them to `action=`.
+- Use `useSubmission()` or `useSubmissions()` to drive pending/result/error UI for form-backed actions.
+- After handling a successful `submission.result`, call `submission.clear()` so dialogs and inspector tools do not replay stale success state.
+- Treat “button click does nothing” on an action flow as a likely transport issue first. Verify the browser is not posting to `http://_server/`.
 
 ## Color Palette Workflow
 
