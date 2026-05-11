@@ -38,6 +38,18 @@ This starter now includes additional reusable wrappers and dev scaffolding sourc
 
 For complete migration details and rationale, see `../docs/visual-notes-reconciliation-2026-02-15.md`.
 
+## SaaS Scaffold
+
+Reusable prototype SaaS pieces live under `src/lib` and `src/routes/api`:
+
+- `src/lib/account/*`: file-backed users, sessions, magic links, credit ledger, Stripe event records, email activity, site errors
+- `src/lib/billing/*`: Stripe checkout and webhook signature helpers
+- `src/lib/email/send.ts`: console delivery by default, Resend delivery when configured
+- `src/lib/admin/analytics.ts`: file-backed request analytics snapshots
+- `src/middleware.ts`: request logging with optional session user enrichment
+
+Data is persisted to `APP_DATA_DIR`, which defaults to `app/data/*` locally. Docker Compose sets it to `/app/data` and mounts that path to a named volume.
+
 ## Markdown Renderer Module
 
 Reusable markdown rendering (GFM, syntax-highlighted code blocks, mermaid rendering) is available at:

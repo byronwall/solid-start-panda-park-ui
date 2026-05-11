@@ -125,12 +125,14 @@ Use these when the task matches the skill intent. Open each skill's `SKILL.md` b
 
 ## Router Actions + Forms
 
-- For UI-triggered writes, prefer real `<form method="post">` submissions wired to server actions over imperative action calls.
-- Define form-backed action handlers to accept `FormData` and give the action a stable name.
-- Normalize action URLs with `normalizeActionUrl(...)` from `app/src/lib/router/action-url.ts` before passing them to `action=`.
-- Use `useSubmission()` or `useSubmissions()` to drive pending/result/error UI for form-backed actions.
-- After handling a successful `submission.result`, call `submission.clear()` so dialogs and inspector tools do not replay stale success state.
-- Treat “button click does nothing” on an action flow as a likely transport issue first. Verify the browser is not posting to `http://_server/`.
+- For UI-triggered writes, prefer `useAction(...)` in TypeScript over `<form method="post">` submissions.
+- Avoid adding new form-backed mutations unless native browser form behavior is explicitly required and worth the extra transport/state complexity.
+- Keep write state local and explicit with signals such as `pending`, `error`, and optimistic values instead of relying on `useSubmission()` or `useSubmissions()`.
+- Build `FormData` in TypeScript only when an existing server action still expects it. Do not render hidden forms or call `requestSubmit()` as an action transport.
+- For new or substantially touched actions, prefer typed object inputs over `FormData` when Solid Router/server-action constraints allow it.
+- Keep action handlers stable and named, and keep server-only logic on the server.
+- Avoid `normalizeActionUrl(...)` in new UI code; it exists for legacy form-backed actions during migration.
+- Treat “button click does nothing” on an action flow as a likely client/action-state issue first. Verify the relevant `useAction(...)` call runs, pending state changes, and errors surface in UI/toasts.
 
 ## Color Palette Workflow
 
@@ -144,6 +146,17 @@ Use these when the task matches the skill intent. Open each skill's `SKILL.md` b
 
 - Root `.mcp.json` includes Ark UI MCP server wiring for component-aware assistance.
 - `app/vitest.config.ts` provides baseline testing config and `~` alias resolution.
+- The starter includes a file-backed SaaS scaffold for prototype auth, Stripe, email, analytics, and admin JSON endpoints. Keep it generic when extending it; move app-specific products, prices, and copy into env/config wrappers.
+- Local SaaS data is written under `APP_DATA_DIR` and defaults to `app/data/*`. Treat it as runtime state, not source.
+- Root `Dockerfile` and `docker-compose.yml` are known-working production scaffolds. Preserve the persisted `/app/data` volume when adapting them.
+
+## SaaS Scaffold
+
+- Auth/session modules live under `app/src/lib/account/*`; API routes live under `app/src/routes/api/auth/*` and `app/src/routes/api/account.ts`.
+- Magic-link auth defaults to console email. Configure `EMAIL_DELIVERY=resend`, `RESEND_API_KEY`, and `EMAIL_FROM` for real delivery.
+- Stripe checkout uses `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_CREDIT_PACK`, and credit-pack metadata. Keep webhook handlers idempotent by recording Stripe event ids before granting credits.
+- Request analytics are captured by `app/src/middleware.ts` into `APP_DATA_DIR/analytics/store.json`; exclude noisy static/internal routes in `shouldTrackAnalyticsPath`.
+- Admin endpoints should use `requireSuperUser(...)` and `SUPER_USER_EMAIL`.
 
 ## Jobs And Websockets
 

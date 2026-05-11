@@ -25,6 +25,8 @@ type SimpleDialogProps = {
   skipPortal?: boolean;
   initialFocusEl?: () => HTMLElement | null;
   restoreFocus?: boolean;
+  preventScroll?: boolean;
+  scrollBehavior?: "inside" | "outside";
 };
 
 export function SimpleDialog(props: SimpleDialogProps) {
@@ -44,9 +46,20 @@ export function SimpleDialog(props: SimpleDialogProps) {
         maxW,
         "--dialog-base-margin": "24px",
         maxH: "calc(100vh - (var(--dialog-base-margin) * 2))",
-        overflow: "hidden",
+        boxSizing: "border-box",
+        overflow: "visible",
         display: "flex",
         flexDirection: "column",
+        "& .dialog__closeTrigger": {
+          top: "12px",
+          insetEnd: "12px",
+          w: "28px",
+          h: "28px",
+          minW: "28px",
+          minH: "28px",
+          borderRadius: "4px",
+          boxShadow: "none",
+        },
       }),
     );
     if (props.contentClass) classes.push(props.contentClass);
@@ -76,6 +89,8 @@ export function SimpleDialog(props: SimpleDialogProps) {
       onOpenChange={handleOpenChange}
       initialFocusEl={props.initialFocusEl}
       restoreFocus={props.restoreFocus}
+      preventScroll={props.preventScroll}
+      scrollBehavior={props.scrollBehavior}
     >
       <WrapWhen when={props.skipPortal !== true} component={Portal}>
         <Dialog.Backdrop />
@@ -87,9 +102,10 @@ export function SimpleDialog(props: SimpleDialogProps) {
             <Show when={shouldShowClose()}>
               <Dialog.CloseTrigger
                 aria-label={props.closeLabel ?? "Close dialog"}
-              >
-                <CloseButton />
-              </Dialog.CloseTrigger>
+                asChild={(triggerProps) => (
+                  <CloseButton {...triggerProps()} />
+                )}
+              />
             </Show>
             <Dialog.Body
               class={css({
