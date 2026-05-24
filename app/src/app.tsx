@@ -8,7 +8,7 @@ import {
   onCleanup,
   onMount,
 } from "solid-js";
-import { ConsoleLogCaptureProvider } from "./components/console-log-capture";
+import { ConsoleLogCaptureProvider } from "./components/ui";
 import { GlobalErrorOverlay } from "./components/errors/GlobalErrorOverlay";
 
 import "./index.css";

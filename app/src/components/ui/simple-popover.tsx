@@ -26,6 +26,7 @@ type PopoverProps = {
   offset?: number;
   class?: string;
   style?: JSX.CSSProperties;
+  anchorStyle?: JSX.CSSProperties;
   children: JSX.Element;
   portalled?: boolean;
   portalRef?: HTMLElement | undefined;
@@ -40,6 +41,7 @@ export const SimplePopover = (props: PopoverProps) => {
     "offset",
     "class",
     "style",
+    "anchorStyle",
     "children",
     "portalled",
     "portalRef",
@@ -65,7 +67,7 @@ export const SimplePopover = (props: PopoverProps) => {
       }}
       positioning={positioning()}
     >
-      <Popover.Anchor style={{ display: "inline-flex", width: "fit-content" }}>
+      <Popover.Anchor style={{ display: "inline-flex", width: "fit-content", ...local.anchorStyle }}>
         {local.anchor}
       </Popover.Anchor>
       <Show

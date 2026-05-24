@@ -25,7 +25,7 @@ export function Textarea(props: TextareaProps) {
   };
 
   createEffect(() => {
-    local.value;
+    void local.value;
     resizeTextarea();
   });
 

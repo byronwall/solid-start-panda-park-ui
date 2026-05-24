@@ -1,8 +1,7 @@
 import type { Accessor } from "solid-js";
 import { Show, createSignal, onCleanup } from "solid-js";
 import { Box, Flex, Stack } from "styled-system/jsx";
-import { Button } from "~/components/ui/button";
-import { Text } from "~/components/ui/text";
+import { Button, Text } from "~/components/ui";
 
 type GlobalErrorOverlayProps = {
   title: string;

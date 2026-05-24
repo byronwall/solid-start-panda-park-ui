@@ -16,7 +16,27 @@ import { fileUpload } from "styled-system/recipes";
 import { Span } from "./span";
 import { Button as DemoButton } from "./button";
 
-const { withProvider, withContext } = createStyleContext(fileUpload);
+const createFileUploadStyleContext = () => createStyleContext(fileUpload);
+
+type FileUploadStyleContext = ReturnType<typeof createFileUploadStyleContext>;
+
+const getFileUploadStyleContext = (): FileUploadStyleContext => {
+  if (!import.meta.hot) {
+    return createFileUploadStyleContext();
+  }
+
+  const data = import.meta.hot.data as {
+    fileUploadStyleContext?: FileUploadStyleContext;
+  };
+
+  // Solid Refresh can keep the existing Root provider mounted while swapping
+  // this module's slot components. Reuse the same style context so refreshed
+  // consumers still see the mounted provider instead of throwing route errors.
+  data.fileUploadStyleContext ??= createFileUploadStyleContext();
+  return data.fileUploadStyleContext;
+};
+
+const { withProvider, withContext } = getFileUploadStyleContext();
 
 export type RootProps = ComponentProps<typeof Root>;
 export type ItemProps = ComponentProps<typeof Item>;
@@ -89,7 +109,7 @@ export const Items = (props: ItemsProps) => {
   );
 };
 
-interface FileUploadListProps extends ItemsBaseProps {}
+type FileUploadListProps = ItemsBaseProps;
 
 export const List = (props: FileUploadListProps) => {
   const [local, rest] = splitProps(props, ["showSize", "clearable", "files"]);

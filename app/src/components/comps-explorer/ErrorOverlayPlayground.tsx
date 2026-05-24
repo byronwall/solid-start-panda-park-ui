@@ -1,7 +1,5 @@
 import { Box, HStack, Stack, VStack } from "styled-system/jsx";
-import { Button } from "~/components/ui/button";
-import { Code } from "~/components/ui/code";
-import { Text } from "~/components/ui/text";
+import { Button, Code, Text } from "~/components/ui";
 
 export function ErrorOverlayPlayground() {
   const dispatchWindowError = () => {

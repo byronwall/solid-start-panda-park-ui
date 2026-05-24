@@ -1,7 +1,7 @@
 import { Button, type ButtonProps } from "./button";
 import { Icon } from "./icon";
 
-export interface IconButtonProps extends ButtonProps {}
+export type IconButtonProps = ButtonProps;
 
 export const IconButton = (props: IconButtonProps) => {
   return <Button px="0" py="0" {...props} />;

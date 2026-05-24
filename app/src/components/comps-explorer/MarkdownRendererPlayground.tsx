@@ -1,6 +1,6 @@
 import { css } from "styled-system/css";
 import { Box, VStack } from "styled-system/jsx";
-import { MarkdownRenderer } from "~/components/markdown-renderer/MarkdownRenderer";
+import { MarkdownRenderer } from "~/components/ui";
 
 const buildCodeBlock = (lineCount: number) =>
   Array.from({ length: lineCount }, (_, index) => {

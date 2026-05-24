@@ -1,9 +1,7 @@
 import { For, Show, createMemo, createSignal } from "solid-js";
 import { css } from "styled-system/css";
 import { Box, HStack, VStack } from "styled-system/jsx";
-import { Button } from "~/components/ui/button";
-import { Code } from "~/components/ui/code";
-import { DEMO_COMPONENTS, RenderDemoComponent } from "~/components/ui/demos";
+import { Button, Code, DEMO_COMPONENTS, RenderDemoComponent } from "~/components/ui";
 import {
   resolveCombo,
   type AxisLayout,

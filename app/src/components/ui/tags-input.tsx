@@ -35,8 +35,7 @@ export const Label = withContext(TagsInput.Label, "label");
 
 export { TagsInputContext as Context } from "@ark-ui/solid/tags-input";
 
-export interface TagsInputItemsProps
-  extends Omit<ItemProps, "value" | "index"> {}
+export type TagsInputItemsProps = Omit<ItemProps, "value" | "index">;
 
 export const Items = (props: TagsInputItemsProps) => {
   const context = useTagsInputContext();

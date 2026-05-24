@@ -1,10 +1,9 @@
 import { useNavigate } from "@solidjs/router";
 import { ArrowRight, Hammer, LayoutTemplate, Wrench } from "lucide-solid";
-import { Button } from "~/components/ui/button";
-import { Text } from "~/components/ui/text";
+import { Button, Text } from "~/components/ui";
 import { Box, Grid, HStack, VStack } from "styled-system/jsx";
 import { COMPS_EXPLORER_BASE_PATH } from "~/components/comps-explorer/compsExplorer.shared";
-import * as Card from "~/components/ui/card";
+import { Card } from "~/components/ui";
 
 export default function HomeRoute() {
   const navigate = useNavigate();

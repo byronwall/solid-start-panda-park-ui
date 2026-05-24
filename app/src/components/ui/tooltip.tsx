@@ -96,22 +96,21 @@ export interface TooltipDemoProps {
   variantProps?: Record<string, string>;
 }
 
-const tooltipPlacements = [
-  "top-start",
-  "top",
-  "top-end",
-  "left",
-  "right",
-  "bottom-start",
-  "bottom",
-  "bottom-end",
-] as const;
+type TooltipPlacement =
+  | "bottom"
+  | "bottom-end"
+  | "bottom-start"
+  | "left"
+  | "right"
+  | "top"
+  | "top-end"
+  | "top-start";
 const tooltipDelayPresets = [
   { label: "instant", openDelay: 0, closeDelay: 0 },
   { label: "fast", openDelay: 150, closeDelay: 100 },
   { label: "slow", openDelay: 600, closeDelay: 250 },
 ] as const;
-const placementGrid: Array<Array<(typeof tooltipPlacements)[number] | null>> = [
+const placementGrid: Array<Array<TooltipPlacement | null>> = [
   ["top-start", "top", "top-end"],
   ["left", null, "right"],
   ["bottom-start", "bottom", "bottom-end"],
@@ -119,7 +118,7 @@ const placementGrid: Array<Array<(typeof tooltipPlacements)[number] | null>> = [
 
 export const TooltipDemo = (props: TooltipDemoProps) => {
   const [selectedPlacement, setSelectedPlacement] =
-    createSignal<(typeof tooltipPlacements)[number]>("top");
+    createSignal<TooltipPlacement>("top");
   const [selectedDelayLabel, setSelectedDelayLabel] =
     createSignal<(typeof tooltipDelayPresets)[number]["label"]>("fast");
   const [showArrow, setShowArrow] = createSignal(true);

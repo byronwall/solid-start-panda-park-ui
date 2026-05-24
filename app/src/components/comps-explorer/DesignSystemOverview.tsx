@@ -2,10 +2,7 @@ import { For, Show, createMemo, createSignal, onCleanup, onMount } from "solid-j
 import { css } from "styled-system/css";
 import { Box, HStack, VStack } from "styled-system/jsx";
 import { token } from "styled-system/tokens";
-import { Button } from "~/components/ui/button";
-import * as Collapsible from "~/components/ui/collapsible";
-import * as Table from "~/components/ui/table";
-import { Tooltip } from "~/components/ui/tooltip";
+import { Button, Collapsible, Table, Tooltip } from "~/components/ui";
 import { recipes } from "~/theme/recipes";
 
 type RecipeLike = {

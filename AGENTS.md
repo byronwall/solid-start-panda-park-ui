@@ -8,19 +8,24 @@ Repository-level guidance for contributors and coding agents.
 - Use `pnpm` for package/scripts commands; use `pnpm dlx` for one-off CLIs.
 - Dependency installs are user-run by default: ask the user to run `pnpm i` (and any required install/update command) locally when dependencies change.
 - Do not rely on sandboxed installs for verification; sandbox networking/store behavior is unreliable in this environment.
+- Treat `pnpm -C app lint` as an important quality gate. It includes TS complexity guardrails: 400 effective LOC per source file, cyclomatic complexity 15, and nesting depth 4. Follow these warnings when adding or substantially touching code; prefer splitting focused modules/functions over suppressing the rule.
+- Keep Playwright usability evaluation reports, run logs, screenshots, and similar generated artifacts under repo-root `tmp/evals/`; it is git-ignored so eval images and reports do not get committed.
 - AI SDK/OpenAI setup lives in `app/.env.example`. Provide `OPENAI_API_KEY`; prefer `OPENAI_MODEL=gpt-5-mini` for default work and `OPENAI_HEAVY_MODEL=gpt-5.4` for heavier tasks.
 - Prefer SolidStart data APIs (`query` + `createResource` for reads, server actions for writes).
 - For `createResource`, prefer reading `resource.latest` by default to avoid transient empty/loading blips during revalidation.
 - Use `resource()` directly only when you intentionally want a pending/loading transition in the UI.
+- Prefer `createStore` for related Solid UI state that is reset, saved, validated, or updated together; reserve `createSignal` for isolated scalar values.
+- Prefer feature-scoped context/providers when state or actions are needed by siblings, repeated items, or descendants beyond two to three component levels; avoid pushing large state/action prop bundles through TSX trees.
 - For app navigation, prefer Solid Router navigation (`useNavigate`, `<A>`, router-aware `Link`) with root-relative route paths (for example `"/"` and `"/comps"`); avoid raw anchor navigation that can bypass configured router base paths.
-- Prefer `~/components/ui/*` wrappers over route-level direct Ark composition.
+- Prefer shared UI wrappers from the `~/components/ui` barrel over route-level direct Ark composition.
 - Prefer ParkUI wrappers for interactive controls over native elements when a wrapper exists.
-- Use `~/components/ui/tooltip` for user-facing hover/focus help text; avoid `title` attributes.
+- Use the shared `Tooltip` wrapper for user-facing hover/focus help text; avoid `title` attributes.
 - Ark Solid `asChild` callback props are getter functions. Spread `...props()` in wrapper callbacks.
 - Keep reusable UI out of `app/src/routes/`; put shared code in `app/src/components/*`.
 - Prefer tokenized Panda styles over one-off CSS values.
 - For `styled-system`/Panda helper props (`jsx` patterns, `css`, recipe props), use static literal values only.
-- Avoid dynamic prop-driven class/value generation in TSX for helper props; map to static variants or use explicit inline style for truly runtime-dynamic values.
+- Avoid dynamic prop-driven class/value generation in TSX for helper props; map to static variants or use explicit inline `style` for truly runtime-dynamic values.
+- Never pass computed floating-point or percentage geometry through Panda helper props such as `width`, `height`, `left`, `top`, `transform`, or grid/pattern props. Use inline `style` for runtime chart/layout geometry so values like `37.42%` are applied directly instead of relying on generated classes.
 - Prefer explicit labels for form inputs; avoid placeholder-only labeling unless tightly constrained.
 
 ## Repo Structure
@@ -39,9 +44,25 @@ Run from `app/` (or use `pnpm -C app <cmd>`):
 - `pnpm install`
 - `pnpm prepare`
 - `pnpm dev`
+- `pnpm lint`
 - `pnpm type-check`
 - `pnpm test`
 - `pnpm build`
+
+## Runtime Schemas And Zod
+
+- Use `zod` as the default runtime contract for JSON boundaries, persisted files, request bodies, server action inputs, and stringly UI/domain values.
+- Put schemas next to the domain they protect. Shared helpers belong in `app/src/lib/*`; route-only request parsing can stay near the route.
+- Derive TypeScript types from schemas with `z.infer` when the schema is the source of truth. Do not keep separate handwritten type unions, default factories, and runtime parsers for the same shape unless a local framework type requires a narrow adapter.
+- Let schemas own empty/default objects with `schema.parse({})` when practical. Prefer this over duplicated `createEmptyX()` objects.
+- For API routes and server actions, parse input before calling domain logic. Avoid `await request.json() as Type`.
+- Choose the parse policy intentionally:
+  - use `parse` / fail fast for critical data such as account, billing, saved project files, and domain specs when corruption should be visible
+  - use `safeParse` plus logging/fallback only for lossy operational data such as analytics
+  - add explicit migrations before accepting old persisted shapes
+- For editable UI drafts, keep a draft schema that preserves strings and incomplete empty values. Add a second normalized schema/helper when values must become numbers, booleans, lists, dates, or domain values before business logic.
+- Use Zod for shape, coercion, defaults, and path-aware errors. Keep dataset-aware checks, cross-record references, layout math, and business rules in normal domain functions after parsing.
+- Add focused tests whenever schemas replace handwritten parsing/defaulting.
 
 ## AI SDK + OpenAI
 
@@ -96,21 +117,28 @@ References:
 Local skills imported from the visual-notes workflow are available under `.agents/skills/`:
 
 - `color-palette-check-and-add`
-- `component-structure-minimal-dom`
+- `dense-action-web-app-design`
+- `playwright-mcp-usability-evaluation`
 - `post-work-doc-playbook`
-- `solid-props-state-patterns`
-- `solid-reactivity-control-flow`
-- `solid-structure-types-quality`
-- `solid-ui-composition-patterns`
-- `solidstart-data-async`
-- `tiptap-codeblock-stability-playbook`
-- `tiptap-nodeview-migration-playbook`
-- `toc-rail-layout-playbook`
+- `repo-clean-up`
+- `solid-app-patterns`
+- `solid-ui-system-patterns`
+- `solidstart-data-ssr-patterns`
 
 Use these when the task matches the skill intent. Open each skill's `SKILL.md` before applying it.
 
+Solid skill routing:
+
+- For any non-trivial Solid component edit, use `solid-app-patterns`.
+- If the edit touches visible UI, ParkUI/Panda wrappers, layout, overflow, shared component extraction, or route-versus-component boundaries, also use `solid-ui-system-patterns`.
+- If the edit touches routes, resources, server actions, async loading, route metadata, missing-resource behavior, overlays on SSR pages, or hydration-sensitive rendering, also use `solidstart-data-ssr-patterns`.
+- Use `solid-ssr-hydration-debug-playbook` only for active hydration errors, SSR/client DOM mismatches, hard-refresh failures, or SSR-only crashes.
+
 ## UI Wrapper Guidance
 
+- Public app code should import shared UI from the `components/ui` index (`~/components/ui`, or the equivalent relative index when the import-alias rule requires it), not subpaths such as `~/components/ui/button`. The ESLint rule `local/no-ui-subpath-imports` warns outside `app/src/components/ui/**`.
+- When adding or renaming a shared UI wrapper, update `app/src/components/ui/index.ts` in the same change. Export single wrappers as named exports and compound/slot wrappers as namespace exports when callers naturally use `Component.Part`.
+- Files inside `app/src/components/ui/**` may keep direct relative sibling imports to avoid circular public-barrel imports.
 - For reusable overlays, prefer the simplified wrappers first:
   - `SimpleDialog`
   - `SimplePopover`
@@ -122,6 +150,18 @@ Use these when the task matches the skill intent. Open each skill's `SKILL.md` b
 - Use the shared `Tooltip` wrapper for hover/focus help content; avoid native `title` behavior.
 - Keep SSR and first client render structure stable for overlay-heavy controls.
 - Forward wrapper props to the rendered slot that actually owns DOM/styling.
+
+## Solid State And Provider Patterns
+
+- Choose state primitives by cohesion:
+  - Use `createSignal` for one independent boolean/string/number or other isolated value.
+  - Use `createStore` for grouped form drafts, filter/sort models, table layout state, persistence status, selected ids plus related metadata, and state that is reset or submitted as one unit.
+- Do not build stacks of parallel signals for one feature model. If several setters are usually called in the same handler or `batch(...)`, model that state as a store with named patch/actions.
+- Prefer feature providers for state shared by sibling panels, toolbar/list/detail compositions, repeated cards, inspectors, or deeply nested controls. Export a provider and a safe `useX()` hook that throws when used outside the provider.
+- Keep route/page components as composition shells. Move feature state, selectors, and actions into a provider or feature hook once the page starts passing settings, option lists, selected ids, and mutation callbacks through multiple layers.
+- Avoid prop drilling beyond two to three levels. Pass leaf-specific ids or small display props; let descendants read shared feature state/actions from context.
+- Keep providers scoped to a feature island and keep non-UI business logic in `app/src/lib/*`. Context should expose state, derived selectors, and named UI actions, not become a general global store.
+- Batch multi-field updates when keeping signals is still appropriate; otherwise prefer a store patch/action so related updates are atomic and easier to review.
 
 ## Router Actions + Forms
 
@@ -206,6 +246,7 @@ Use these when the task matches the skill intent. Open each skill's `SKILL.md` b
 - Panda/styled-system values:
   - Keep helper props static (compile-time friendly). Do not build dynamic class values in TSX for pattern props like `columns`, `gridTemplateColumns`, etc.
   - Prefer static variant mapping; if value must be runtime-dynamic, use explicit inline `style` for that one property.
+  - Do not use Panda helper props for computed floating values or percentages. Runtime geometry such as stacked-bar segment widths, brush bounds, SVG overlay positions, or transform offsets belongs in inline `style` or SVG attributes.
 - Dialog-like controls:
   - Compose as `Root -> Backdrop -> Positioner -> Content -> Header/Body/Footer`.
 - Collection/list controls:
@@ -283,6 +324,7 @@ Each component file under `app/src/components/ui/*` also includes a colocated re
 ## Component System Update Checklist
 
 - Add/update component file under `app/src/components/ui/`.
+- Add/update the public export in `app/src/components/ui/index.ts`.
 - Register the component reference usage in `DEMO_COMPONENTS` (`app/src/components/ui/demos.tsx`).
 - Ensure composition uses shared wrappers and tokenized Panda styles.
 - Verify SSR-first render stability for overlays/select-like components.

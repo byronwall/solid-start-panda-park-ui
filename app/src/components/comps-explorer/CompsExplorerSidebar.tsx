@@ -2,7 +2,7 @@ import { A, useNavigate } from "@solidjs/router";
 import { For, createMemo } from "solid-js";
 import { css } from "styled-system/css";
 import { Box, HStack, VStack } from "styled-system/jsx";
-import { Button } from "~/components/ui/button";
+import { Button } from "~/components/ui";
 import {
   compsExplorerPath,
   DESIGN_SYSTEM_COLORS_KEY,
