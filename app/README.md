@@ -5,7 +5,7 @@ SolidStart app with Park UI wrappers and Panda CSS.
 ## Prerequisites
 
 - Node `>=22`
-- pnpm
+- pnpm `11.7.0`
 
 ## Commands
 

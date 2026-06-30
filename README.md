@@ -13,6 +13,8 @@ Starter repository for SolidStart with Park UI wrappers, Panda theming, and a cu
 
 ## Quick Start
 
+Requires Node `>=22` and pnpm `11.7.0`.
+
 ```bash
 pnpm -C app install
 pnpm -C app dev
