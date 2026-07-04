@@ -9,6 +9,7 @@ Repository-level guidance for contributors and coding agents.
 - pnpm 11 project settings live in `app/pnpm-workspace.yaml`. Keep patched dependency mappings and reviewed dependency build-script approvals there, not under `app/package.json#pnpm`.
 - Dependency installs are user-run by default: ask the user to run `pnpm i` (and any required install/update command) locally when dependencies change.
 - Do not rely on sandboxed installs for verification; sandbox networking/store behavior is unreliable in this environment.
+- The dev server does not work reliably inside the sandbox. When starting it, always request escalation and run `pnpm -C app dev` outside the sandbox first instead of trying a sandboxed run and waiting for it to fail.
 - Treat `pnpm -C app lint` as an important quality gate. It includes TS complexity guardrails: 400 effective LOC per source file, cyclomatic complexity 15, and nesting depth 4. Follow these warnings when adding or substantially touching code; prefer splitting focused modules/functions over suppressing the rule.
 - Keep Playwright usability evaluation reports, run logs, screenshots, and similar generated artifacts under repo-root `tmp/evals/`; it is git-ignored so eval images and reports do not get committed.
 - AI SDK/OpenAI setup lives in `app/.env.example`. Provide `OPENAI_API_KEY`; prefer `OPENAI_MODEL=gpt-5-mini` for default work and `OPENAI_HEAVY_MODEL=gpt-5.4` for heavier tasks.
@@ -44,7 +45,7 @@ Run from `app/` (or use `pnpm -C app <cmd>`):
 
 - `pnpm install`
 - `pnpm prepare`
-- `pnpm dev`
+- `pnpm dev` (run outside the sandbox with escalation)
 - `pnpm lint`
 - `pnpm type-check`
 - `pnpm test`
