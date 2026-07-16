@@ -4,3 +4,6 @@ app/.output/
 app/.vinxi/
 app/styled-system/
 node_modules/
+.pnpm-store/
+live-server-details.json
+live-server-details.json.tmp

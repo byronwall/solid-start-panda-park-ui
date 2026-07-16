@@ -6,6 +6,7 @@ import {
   type LocalUserAccount,
   type PurchaseRecord,
 } from "~/lib/account/store";
+import { getAppBaseUrl } from "~/lib/app/base-url";
 import { getCreditPackConfig } from "./costs";
 
 type StripeCheckoutSession = {
@@ -32,8 +33,6 @@ export type StripeWebhookEvent = {
     object: StripeCheckoutSession & Record<string, unknown>;
   };
 };
-
-const getBaseUrl = () => process.env.APP_BASE_URL || "http://localhost:3000";
 
 const requireStripeEnv = (priceEnvName = "STRIPE_PRICE_CREDIT_PACK") => {
   const secretKey = process.env.STRIPE_SECRET_KEY;
@@ -83,8 +82,8 @@ export const createCheckoutSession = async (
   const config = getCreditPackConfig();
   const params = new URLSearchParams();
   params.set("mode", "payment");
-  params.set("success_url", `${getBaseUrl()}${options.successPath ?? "/account?checkout=success"}`);
-  params.set("cancel_url", `${getBaseUrl()}${options.cancelPath ?? "/pricing?checkout=cancelled"}`);
+  params.set("success_url", `${getAppBaseUrl()}${options.successPath ?? "/account?checkout=success"}`);
+  params.set("cancel_url", `${getAppBaseUrl()}${options.cancelPath ?? "/pricing?checkout=cancelled"}`);
   if (user) {
     params.set("customer_email", user.email);
     params.set("metadata[userId]", user.id);

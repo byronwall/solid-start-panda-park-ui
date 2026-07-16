@@ -1,4 +1,5 @@
 import type { APIEvent } from "@solidjs/start/server";
+import { isConfiguredAppBaseUrlSecure } from "~/lib/app/base-url";
 import { isSuperUserEmail } from "./admin";
 import {
   createSession,
@@ -10,8 +11,6 @@ import {
 } from "./store";
 
 export const SESSION_COOKIE = "starter_session";
-
-const isSecureCookie = () => process.env.APP_BASE_URL?.startsWith("https://") ?? false;
 
 export const parseCookies = (cookieHeader: string | null) => {
   const cookies = new Map<string, string>();
@@ -45,7 +44,7 @@ export const createSessionCookie = (sessionId: string) => {
     "SameSite=Lax",
     "Max-Age=2592000",
   ];
-  if (isSecureCookie()) parts.push("Secure");
+  if (isConfiguredAppBaseUrlSecure()) parts.push("Secure");
   return parts.join("; ");
 };
 
@@ -56,7 +55,7 @@ export const clearSessionCookie = () =>
     "HttpOnly",
     "SameSite=Lax",
     "Max-Age=0",
-    ...(isSecureCookie() ? ["Secure"] : []),
+    ...(isConfiguredAppBaseUrlSecure() ? ["Secure"] : []),
   ].join("; ");
 
 export const createUserSessionCookie = async (userId: string) => {

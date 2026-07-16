@@ -1,9 +1,7 @@
 import type { APIEvent } from "@solidjs/start/server";
 import { createSignInLink } from "~/lib/account/magic-link";
+import { getAppBaseUrl } from "~/lib/app/base-url";
 import { sendMagicLinkEmail } from "~/lib/email/send";
-
-const getBaseUrl = (request: Request) =>
-  process.env.APP_BASE_URL || new URL(request.url).origin;
 
 export async function POST(event: APIEvent) {
   try {
@@ -17,7 +15,7 @@ export async function POST(event: APIEvent) {
 
     const { user, link, url } = await createSignInLink({
       email,
-      baseUrl: getBaseUrl(event.request),
+      baseUrl: getAppBaseUrl(event.request),
       nextPath,
     });
     const delivery = await sendMagicLinkEmail({
