@@ -26,9 +26,20 @@ pnpm -C app dev
 pnpm -C app prepare
 pnpm -C app type-check
 pnpm -C app test
+pnpm -C app verify
 pnpm -C app build
 pnpm -C app start
 ```
+
+`pnpm -C app dev` publishes the current URL and process details to `live-server-details.json`. Only one development server runs per checkout; a second start reports the existing server and exits so agents and developers share the same hot-reloading process.
+
+`verify` runs TypeScript, Vitest, and ESLint through a repository-owned Node launcher. If pnpm fails before it can start the script, run the same checks directly:
+
+```bash
+node app/scripts/verify.mjs
+```
+
+See [docs/manual-browser-verification.md](docs/manual-browser-verification.md) for a selective UI smoke-check checklist, and record normal completed work under the root [CHANGELOG.md](CHANGELOG.md). Detailed work summaries are reserved for explicit retrospective requests.
 
 ## SaaS-Ready Scaffold
 

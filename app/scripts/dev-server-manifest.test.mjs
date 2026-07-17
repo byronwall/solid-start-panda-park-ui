@@ -1,10 +1,20 @@
-import { describe, expect, it } from "vitest";
+import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { afterEach, describe, expect, it } from "vitest";
 import {
   createInactiveManifest,
   createRunningManifest,
   detectServerUrl,
   normalizeLocalServerUrl,
+  writeManifestAtomic,
 } from "./dev-server-manifest.mjs";
+
+const temporaryDirectories = [];
+
+afterEach(async () => {
+  await Promise.all(temporaryDirectories.splice(0).map((path) => rm(path, { recursive: true, force: true })));
+});
 
 describe("dev server manifest helpers", () => {
   it("detects and normalizes local Vinxi URLs", () => {
@@ -56,5 +66,17 @@ describe("dev server manifest helpers", () => {
       port: null,
       exit: { code: 0, signal: null },
     });
+  });
+
+  it("keeps concurrent manifest writes valid", async () => {
+    const directory = await mkdtemp(join(tmpdir(), "dev-server-manifest-"));
+    temporaryDirectories.push(directory);
+    const manifestPath = join(directory, "live-server-details.json");
+    const payloads = Array.from({ length: 12 }, (_, index) => ({ index }));
+
+    await Promise.all(payloads.map((payload) => writeManifestAtomic(manifestPath, payload)));
+
+    const result = JSON.parse(await readFile(manifestPath, "utf8"));
+    expect(payloads).toContainEqual(result);
   });
 });

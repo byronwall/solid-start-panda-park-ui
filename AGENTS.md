@@ -11,9 +11,11 @@ Repository-level guidance for contributors and coding agents.
 - Dependency installs are user-run by default: ask the user to run `pnpm i` (and any required install/update command) locally when dependencies change.
 - Do not rely on sandboxed installs for verification; sandbox networking/store behavior is unreliable in this environment.
 - The dev server does not work reliably inside the sandbox. When starting it, always request escalation and run `pnpm -C app dev` outside the sandbox first instead of trying a sandboxed run and waiting for it to fail.
-- Prefer an existing running server advertised by repo-root `live-server-details.json` before starting another one. The dev wrapper clears its advertised URL when the server exits.
+- Reuse the one running server advertised by repo-root `live-server-details.json`. Never start a second server for the same checkout: all wrappers would hot-reload the same files and may mutate the same development data. The wrapper refuses duplicate starts and clears its advertised URL when it exits.
 - Run `pnpm -C app verify` as the default final quality gate. It runs type checks, tests, and lint; keep production builds for build/deployment-specific verification.
+- If pnpm bootstrap/signature verification fails before the project script starts, run `node app/scripts/verify.mjs`. Report this as “project checks passed; pnpm launcher failed,” not as a failed project verification.
 - Treat its lint phase as an important quality gate. It includes TS complexity guardrails: 400 effective LOC per source file, cyclomatic complexity 15, and nesting depth 4. Follow these warnings when adding or substantially touching code; prefer splitting focused modules/functions over suppressing the rule.
+- Before substantially extending a source file above roughly 325–350 effective lines, identify a responsibility boundary and extract first. Do not wait for the 400-line lint warning.
 - Keep Playwright usability evaluation reports, run logs, screenshots, and similar generated artifacts under repo-root `tmp/evals/`; it is git-ignored so eval images and reports do not get committed.
 - AI SDK/OpenAI setup lives in `app/.env.example`. Provide `OPENAI_API_KEY`; prefer `OPENAI_MODEL=gpt-5-mini` for default work and `OPENAI_HEAVY_MODEL=gpt-5.4` for heavier tasks.
 - Prefer SolidStart data APIs (`query` + `createResource` for reads, server actions for writes).
@@ -32,6 +34,7 @@ Repository-level guidance for contributors and coding agents.
 - Avoid dynamic prop-driven class/value generation in TSX for helper props; map to static variants or use explicit inline `style` for truly runtime-dynamic values.
 - Never pass computed floating-point or percentage geometry through Panda helper props such as `width`, `height`, `left`, `top`, `transform`, or grid/pattern props. Use inline `style` for runtime chart/layout geometry so values like `37.42%` are applied directly instead of relying on generated classes.
 - Prefer explicit labels for form inputs; avoid placeholder-only labeling unless tightly constrained.
+- Record ordinary completed work under `CHANGELOG.md#Unreleased`. Create a full `docs/*work-summary.md` only when the user explicitly requests a retrospective or work summary.
 
 ## Repo Structure
 
@@ -41,6 +44,7 @@ Repository-level guidance for contributors and coding agents.
 - Theme/tokens/recipes: `app/src/theme/*`
 - Generated styles/types: `app/styled-system/*`
 - Local reusable agent skills: `.agents/skills/*`
+- Manual browser checklist: `docs/manual-browser-verification.md`
 
 ## Development Commands
 
@@ -54,6 +58,16 @@ Run from `app/` (or use `pnpm -C app <cmd>`):
 - `pnpm test`
 - `pnpm verify`
 - `pnpm build`
+
+## Development Workflow
+
+- Start by recording `git status --short`. Existing and untracked changes are user-owned unless the task clearly created them.
+- When a changed target is untracked, use targeted content inspection plus status evidence; do not stage user files merely to make `git diff` work.
+- If another edit lands in a shared file during verification, inspect the final file and rerun the focused check it can affect.
+- Use the running server from `live-server-details.json` for manual checks. `pnpm -C app dev` reports the existing server instead of spawning another wrapper.
+- Use Browser or Playwright MCP for task-driven manual verification when a UI workflow changes. Include a mobile viewport when the affected workflow is mobile-sensitive.
+- Use `docs/manual-browser-verification.md` to select relevant checks; do not run the entire checklist for every change.
+- Add a concise changelog entry for normal work. An entry may include `Problem:` or `Follow-up:` sub-bullets when useful; omit empty boilerplate.
 
 ## Runtime Schemas And Zod
 

@@ -6,8 +6,10 @@
 - pnpm 11 project settings live in `pnpm-workspace.yaml`. Keep patched dependency mappings and reviewed dependency build-script approvals there, not under `package.json#pnpm`.
 - Dependency installs are user-run by default: run `pnpm i` yourself when dependencies change or a package is added/updated.
 - Assume sandboxed installs may fail; treat local user install as the reliable path.
-- Reuse the running server advertised by repo-root `live-server-details.json` before starting another one; `pnpm dev` maintains and clears that manifest.
+- Reuse the one running server advertised by repo-root `live-server-details.json`; `pnpm dev` refuses duplicate starts and maintains and clears that manifest.
 - Run `pnpm verify` as the default final gate for code changes. It runs type checks, tests, and lint without the slower production build.
+- If pnpm fails before the repository script starts, run `node scripts/verify.mjs` and report the launcher failure separately from the project-check result.
+- Record ordinary completed work in repo-root `CHANGELOG.md`; reserve detailed work summaries for explicit retrospective requests.
 - AI SDK/OpenAI env setup is documented in `app/.env.example`. Provide `OPENAI_API_KEY`; prefer `OPENAI_MODEL=gpt-5-mini` and `OPENAI_HEAVY_MODEL=gpt-5.4`.
 - Reads: `query()` + `createResource()`.
 - For `createResource`, prefer `resource.latest` for steady UI during revalidation.
